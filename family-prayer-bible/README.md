@@ -109,14 +109,25 @@ var DEFAULT_NAMES = ['아빠', '엄마', '딸'];
 이 프로젝트는 빌드 과정이 없는 순수 정적 파일이므로, `family-prayer-bible` 폴더 전체를
 아래와 같은 정적 호스팅 서비스에 그대로 업로드하면 됩니다.
 
-**GitHub Pages (가장 간단)**
+**GitHub Pages — 이 저장소는 이미 배포되어 있습니다**
+
+이 저장소에는 `.github/workflows/deploy-pages.yml` 워크플로가 포함되어 있어,
+`claude/family-prayer-bible-pwa-l0186s` 브랜치의 `family-prayer-bible/` 폴더에 변경이 생길 때마다
+GitHub Actions가 자동으로 GitHub Pages에 배포합니다(저장소 Settings → Pages → Source가
+"GitHub Actions"로 설정되어 있어야 합니다. 이미 설정 및 배포 완료).
+
+**실제 배포 주소:** https://ddase11.github.io/success/
+
+다른 저장소에 처음부터 새로 배포하려면:
 1. GitHub 저장소에 `family-prayer-bible` 폴더의 내용을 푸시합니다.
-2. 저장소 Settings → Pages → Branch를 배포할 브랜치/폴더로 설정합니다.
+2. 저장소 Settings → Pages → Source를 "Deploy from a branch"로 두고 배포할 브랜치/폴더를 고르거나,
+   이 저장소처럼 GitHub Actions 워크플로(`.github/workflows/deploy-pages.yml`)를 추가하고
+   Source를 "GitHub Actions"로 선택합니다.
 3. 발급된 `https://사용자명.github.io/저장소명/` 주소로 접속해 정상 동작을 확인합니다.
 
 **Cloudflare Pages**
 1. Cloudflare Pages에서 새 프로젝트를 만들고 저장소를 연결하거나, 폴더를 직접 업로드합니다.
-2. 빌드 명령 없이 "정적 사이트"로 배포합니다(빌드 출력 디렉터리 = 루트).
+2. 빌드 명령 없이 "정적 사이트"로 배포합니다(빌드 출력 디렉터리 = `family-prayer-bible`).
 
 두 방법 모두 HTTPS가 자동 적용되어 Web Speech API, 서비스워커, PWA 설치가 정상 동작합니다.
 
@@ -135,11 +146,8 @@ var DEFAULT_NAMES = ['아빠', '엄마', '딸'];
 아빠 → 엄마 → 딸 순서로 진행됩니다.
 
 [가족 성경 읽기 시작]
-(실제 배포 URL을 여기에 붙여넣으세요)
+https://ddase11.github.io/success/
 ```
-
-> 이 저장소 자체에는 아직 실제로 발급된 배포 URL이 없습니다. 9번 항목의 방법으로 직접 배포한 뒤,
-> 그 주소를 공지문에 붙여넣어 사용하세요. 실제로 생성되지 않은 URL을 임의로 적어 넣지 마세요.
 
 ## 11. 저작권 확인 사항
 
