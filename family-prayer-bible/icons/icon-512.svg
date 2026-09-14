@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="우리 가족 기도말씀 30 아이콘">
+  <rect width="512" height="512" rx="96" fill="#1B2A4A"/>
+  <g fill="none" stroke="#C9A227" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M256 168c-26-28-70-40-118-32v208c48-8 92 4 118 32 26-28 70-40 118-32V136c-48-8-92 4-118 32z"/>
+    <path d="M256 168v208"/>
+  </g>
+  <g fill="#C9A227">
+    <rect x="240" y="330" width="32" height="96" rx="6"/>
+    <rect x="208" y="362" width="96" height="32" rx="6"/>
+  </g>
+</svg>
