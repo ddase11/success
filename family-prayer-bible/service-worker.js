@@ -12,7 +12,7 @@
  * 진행한다(app.js/index.html 등을 고쳤는데 CACHE_NAME을 그대로 두면 파일
  * 내용은 배포돼도 서비스워커가 갱신되지 않을 수 있다). */
 
-var CACHE_NAME = 'family-prayer-bible-30-v2';
+var CACHE_NAME = 'family-prayer-bible-30-v3';
 var APP_SHELL = [
   './',
   './index.html',

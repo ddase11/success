@@ -1027,7 +1027,11 @@
     });
 
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('service-worker.js').then(function (reg) {
+      // updateViaCache: 'none' — 브라우저가 service-worker.js 파일 자체를
+      // HTTP 캐시에서 재사용하지 않고 매번 서버에 새로 확인하도록 강제한다.
+      // 이 옵션이 없으면 서버에는 새 버전이 올라가도, 브라우저가 예전에 캐시해 둔
+      // service-worker.js 응답을 계속 쓰면서 "바뀐 게 없다"고 오판할 수 있다.
+      navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' }).then(function (reg) {
         reg.update().catch(function () { /* 무시: 다음 방문 때 다시 시도됨 */ });
       }).catch(function (e) {
         console.error('서비스워커 등록에 실패했습니다.', e);
