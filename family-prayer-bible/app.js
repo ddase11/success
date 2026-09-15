@@ -4,8 +4,10 @@
   'use strict';
 
   var STORAGE_KEY = 'familyPrayerBible30.v1';
-  var TOTAL_VERSES = 30;
+  var TOTAL_VERSES = 30; // verses.js에 포함된 기본 구절 개수(고정값, 데이터 검증용)
   var DEFAULT_NAMES = ['아빠', '엄마', '딸'];
+  var SCRIPT_TAG_PATTERN = /<\s*script/i;
+  var HTML_TAG_PATTERN = /<\/?[a-z][\s\S]*>/i;
 
   /* ---------------------------------------------------------
    * 0. 데이터 검증
@@ -21,8 +23,8 @@
     }
 
     var seenIds = {};
-    var scriptTagPattern = /<\s*script/i;
-    var htmlTagPattern = /<\/?[a-z][\s\S]*>/i;
+    var scriptTagPattern = SCRIPT_TAG_PATTERN;
+    var htmlTagPattern = HTML_TAG_PATTERN;
 
     verses.forEach(function (v, idx) {
       var where = 'verses[' + idx + ']';
@@ -82,12 +84,12 @@
       names: DEFAULT_NAMES.slice(),
       lastVerseId: 0,
       completedIds: [],
-      dailyCount: 3,
       startMode: 'restart',
       speechRate: 1.0,
       fontSize: 'normal',
       lastUsedDate: null,
-      session: null
+      session: null,
+      customVerses: []
     };
   }
 
@@ -109,6 +111,7 @@
       base.names = DEFAULT_NAMES.slice();
     }
     if (!Array.isArray(base.completedIds)) base.completedIds = [];
+    if (!Array.isArray(base.customVerses)) base.customVerses = [];
     return base;
   }
 
@@ -133,6 +136,7 @@
     error: $('screen-error'),
     home: $('screen-home'),
     guide: $('screen-guide'),
+    addVerse: $('screen-add-verse'),
     reading: $('screen-reading'),
     complete: $('screen-complete')
   };
@@ -395,8 +399,27 @@
    * --------------------------------------------------------- */
   var versesById = {};
 
+  // 기본 30구절(verses.js) + 사용자가 '말씀추가'로 직접 입력한 구절을 합친 전체 목록.
+  // 사용자 추가 구절은 id가 기본 구절 이후 번호(31, 32, ...)로 이어진다.
+  function getAllVerses() {
+    return window.BIBLE_VERSES.concat(state.customVerses);
+  }
+
+  function totalVerseCount() {
+    return getAllVerses().length;
+  }
+
+  function nextCustomVerseId() {
+    var maxId = 0;
+    getAllVerses().forEach(function (v) {
+      if (v.id > maxId) maxId = v.id;
+    });
+    return maxId + 1;
+  }
+
   function indexVerses() {
-    window.BIBLE_VERSES.forEach(function (v) { versesById[v.id] = v; });
+    versesById = {};
+    getAllVerses().forEach(function (v) { versesById[v.id] = v; });
   }
 
   function totalCompletedCount() {
@@ -412,9 +435,11 @@
     if (verseId > state.lastVerseId) state.lastVerseId = verseId;
   }
 
-  function buildSessionVerseIds(startId, count) {
+  // '기도' 버튼은 항상 시작 구절부터 마지막 구절까지 전부 이어서 읽는다(분량 선택 없음).
+  function buildSessionVerseIds(startId) {
     var ids = [];
-    for (var i = startId; i < startId + count && i <= TOTAL_VERSES; i++) {
+    var total = totalVerseCount();
+    for (var i = startId; i <= total; i++) {
       ids.push(i);
     }
     return ids;
@@ -423,7 +448,6 @@
   /* ---------------------------------------------------------
    * 6. 홈 화면
    * --------------------------------------------------------- */
-  var dailyCountGroup = $('daily-count-group');
   var startPointGroup = $('start-point-group');
   var fontsizeGroup = $('fontsize-group');
   var resumeHint = $('resume-hint');
@@ -449,7 +473,8 @@
   }
 
   function renderHome() {
-    var hasProgress = state.lastVerseId > 0 && state.lastVerseId < TOTAL_VERSES;
+    var total = totalVerseCount();
+    var hasProgress = state.lastVerseId > 0 && state.lastVerseId < total;
     setRadioGroupValue(startPointGroup, hasProgress ? state.startMode || 'resume' : 'restart');
     if (!hasProgress) {
       // 저장된 기록이 없으면 '1번부터 시작'이 기본값
@@ -457,10 +482,9 @@
       setRadioGroupValue(startPointGroup, 'restart');
     }
     resumeHint.textContent = hasProgress
-      ? (state.lastVerseId + '번까지 읽으셨어요. 이어서 읽으면 ' + (state.lastVerseId + 1) + '번부터 시작합니다.')
-      : '아직 저장된 기록이 없어 1번부터 시작합니다.';
+      ? (state.lastVerseId + '번까지 읽으셨어요. 이어서 읽으면 ' + (state.lastVerseId + 1) + '번부터 시작합니다. (전체 ' + total + '구절)')
+      : '아직 저장된 기록이 없어 1번부터 시작합니다. (전체 ' + total + '구절)';
 
-    setRadioGroupValue(dailyCountGroup, state.dailyCount);
     applyFontSize(state.fontSize);
 
     nameInputs.forEach(function (input, i) {
@@ -495,14 +519,6 @@
     div.textContent = str;
     return div.innerHTML;
   }
-
-  dailyCountGroup.addEventListener('click', function (e) {
-    var btn = e.target.closest('.option-btn');
-    if (!btn) return;
-    state.dailyCount = parseInt(btn.getAttribute('data-value'), 10);
-    setRadioGroupValue(dailyCountGroup, state.dailyCount);
-    saveState();
-  });
 
   startPointGroup.addEventListener('click', function (e) {
     var btn = e.target.closest('.option-btn');
@@ -546,34 +562,122 @@
   $('confirm-ok').addEventListener('click', function () {
     confirmDialog.hidden = true;
     var names = state.names;
-    var dailyCount = state.dailyCount;
     var fontSize = state.fontSize;
     var speechRate = state.speechRate;
+    var customVerses = state.customVerses;
     state = defaultState();
     state.names = names;
-    state.dailyCount = dailyCount;
     state.fontSize = fontSize;
     state.speechRate = speechRate;
+    state.customVerses = customVerses;
     saveState();
     renderHome();
     announce('읽기 기록이 초기화되었습니다.');
   });
 
-  $('btn-start').addEventListener('click', withLock(function () {
-    var hasProgress = state.lastVerseId > 0 && state.lastVerseId < TOTAL_VERSES;
+  $('btn-pray').addEventListener('click', withLock(function () {
+    var total = totalVerseCount();
+    var hasProgress = state.lastVerseId > 0 && state.lastVerseId < total;
     var startId = 1;
     if (hasProgress && state.startMode === 'resume') {
       startId = state.lastVerseId + 1;
     }
-    if (startId > TOTAL_VERSES) startId = 1;
+    if (startId > total) startId = 1;
 
-    var ids = buildSessionVerseIds(startId, state.dailyCount);
-    if (ids.length === 0) ids = buildSessionVerseIds(1, state.dailyCount);
+    var ids = buildSessionVerseIds(startId);
+    if (ids.length === 0) ids = buildSessionVerseIds(1);
 
     state.session = { verseIds: ids, index: 0 };
     saveState();
     enterReading();
   }));
+
+  $('btn-add-verse').addEventListener('click', withLock(function () {
+    showScreen('addVerse');
+    $('add-verse-error').hidden = true;
+    $('add-verse-success').hidden = true;
+  }));
+
+  /* ---------------------------------------------------------
+   * 6-1. 말씀 추가 화면
+   * --------------------------------------------------------- */
+  var addVerseForm = $('add-verse-form');
+  var addVerseError = $('add-verse-error');
+  var addVerseSuccess = $('add-verse-success');
+
+  function showAddVerseError(msg) {
+    addVerseSuccess.hidden = true;
+    addVerseError.textContent = msg;
+    addVerseError.hidden = false;
+  }
+
+  function clearAddVerseForm() {
+    $('add-book-ko').value = '';
+    $('add-chapter').value = '';
+    $('add-verse-num').value = '';
+    $('add-reference-en').value = '';
+    $('add-korean').value = '';
+    $('add-english').value = '';
+  }
+
+  $('btn-add-verse-cancel').addEventListener('click', withLock(function () {
+    addVerseError.hidden = true;
+    addVerseSuccess.hidden = true;
+    showScreen('home');
+    renderHome();
+  }));
+
+  var handleAddVerseSubmit = withLock(function () {
+    var bookKo = $('add-book-ko').value.trim();
+    var chapter = $('add-chapter').value.trim();
+    var verseNum = $('add-verse-num').value.trim();
+    var referenceEn = $('add-reference-en').value.trim();
+    var korean = $('add-korean').value.trim();
+    var english = $('add-english').value.trim();
+
+    if (!bookKo || !chapter || !verseNum || !referenceEn || !korean || !english) {
+      showAddVerseError('모든 항목을 입력해 주세요.');
+      return;
+    }
+    if (!/^[0-9]+$/.test(chapter) || !/^[0-9]+$/.test(verseNum)) {
+      showAddVerseError('장과 절은 숫자로 입력해 주세요.');
+      return;
+    }
+
+    var fields = [bookKo, referenceEn, korean, english];
+    for (var i = 0; i < fields.length; i++) {
+      if (SCRIPT_TAG_PATTERN.test(fields[i]) || HTML_TAG_PATTERN.test(fields[i])) {
+        showAddVerseError('입력 내용에 HTML/스크립트로 의심되는 내용이 포함되어 있어 추가할 수 없습니다.');
+        return;
+      }
+    }
+
+    var newId = nextCustomVerseId();
+    var referenceKo = bookKo + ' ' + chapter + '장 ' + verseNum + '절';
+
+    state.customVerses.push({
+      id: newId,
+      referenceKo: referenceKo,
+      referenceEn: referenceEn,
+      korean: korean,
+      english: english
+    });
+    saveState();
+    indexVerses();
+
+    clearAddVerseForm();
+    addVerseError.hidden = true;
+    addVerseSuccess.textContent = newId + '번 말씀으로 추가되었습니다. (' + referenceKo + ')';
+    addVerseSuccess.hidden = false;
+    announce(referenceKo + '가 ' + newId + '번 말씀으로 추가되었습니다.');
+  });
+
+  addVerseForm.addEventListener('submit', function (e) {
+    // 폼의 기본 제출(페이지 새로고침)은 잠금 상태와 무관하게 항상 막아야 한다.
+    // withLock으로 감싼 처리 로직만 잠금 대상으로 두어, 연타로 인한 새로고침을 방지한다.
+    e.preventDefault();
+    handleAddVerseSubmit();
+  });
 
   /* ---------------------------------------------------------
    * 7. 읽기 화면
@@ -619,7 +723,8 @@
 
     var todayTotal = state.session.verseIds.length;
     var todayCurrent = state.session.index + 1;
-    elProgressText.textContent = '오늘 ' + todayCurrent + '/' + todayTotal + ' · 전체 ' + verseId + '/' + TOTAL_VERSES;
+    var total = totalVerseCount();
+    elProgressText.textContent = '이번에 ' + todayCurrent + '/' + todayTotal + ' · 전체 ' + verseId + '/' + total;
     var pct = Math.round((todayCurrent / todayTotal) * 100);
     elProgressFill.style.width = pct + '%';
     elProgressTrack.setAttribute('aria-valuenow', String(pct));
@@ -628,7 +733,7 @@
     var personName = state.names[personIdx] || DEFAULT_NAMES[personIdx];
     elTurnBadge.textContent = personName + ' 차례';
 
-    elReference.textContent = verse.referenceKo + ' · ' + verse.referenceEn;
+    elReference.textContent = verseId + '번 · ' + verse.referenceKo + ' · ' + verse.referenceEn;
     elKorean.textContent = cleanText(verse.korean);
 
     Speech.cancel();
@@ -785,6 +890,10 @@
   $('btn-reading-home').addEventListener('click', withLock(function () {
     Speech.cancel();
     releaseWakeLock();
+    // 읽던 중간이라도 '처음 화면으로'를 누르면 이번 회차는 마친 것으로 보고 세션을 비운다.
+    // (이미 읽은 진행 상태(lastVerseId/completedIds)는 그대로 유지되어 '이어서 읽기'로 계속할 수 있다.)
+    state.session = null;
+    saveState();
     showScreen('home');
     renderHome();
   }));
@@ -808,16 +917,19 @@
   }
 
   function renderComplete(summary) {
+    var total = totalVerseCount();
     var totalDone = totalCompletedCount();
-    var nextStart = state.lastVerseId >= TOTAL_VERSES ? 1 : state.lastVerseId + 1;
+    var nextStart = state.lastVerseId >= total ? 1 : state.lastVerseId + 1;
 
     $('stat-today').textContent = '오늘 읽은 구절: ' + summary.todayCount + '개';
-    $('stat-total').textContent = '전체 완료 구절: ' + totalDone + '/' + TOTAL_VERSES + '개';
+    $('stat-total').textContent = '전체 완료 구절: ' + totalDone + '/' + total + '개';
     $('stat-next').textContent = '다음에 시작할 구절: ' + nextStart + '번';
 
-    var allDone = totalDone >= TOTAL_VERSES;
-    $('complete-celebrate').hidden = !allDone;
-    announce(allDone ? '기도의 말씀 30구절을 모두 읽었습니다' : '오늘의 말씀 읽기를 마쳤습니다');
+    var allDone = totalDone >= total;
+    var celebrateEl = $('complete-celebrate');
+    celebrateEl.textContent = '기도의 말씀 ' + total + '구절을 모두 읽었습니다';
+    celebrateEl.hidden = !allDone;
+    announce(allDone ? celebrateEl.textContent : '오늘의 말씀 읽기를 마쳤습니다');
   }
 
   $('btn-review-today').addEventListener('click', withLock(function () {
@@ -830,9 +942,10 @@
   }));
 
   $('btn-continue').addEventListener('click', withLock(function () {
-    var nextStart = state.lastVerseId >= TOTAL_VERSES ? 1 : state.lastVerseId + 1;
-    var ids = buildSessionVerseIds(nextStart, state.dailyCount);
-    if (ids.length === 0) ids = buildSessionVerseIds(1, state.dailyCount);
+    var total = totalVerseCount();
+    var nextStart = state.lastVerseId >= total ? 1 : state.lastVerseId + 1;
+    var ids = buildSessionVerseIds(nextStart);
+    if (ids.length === 0) ids = buildSessionVerseIds(1);
     state.session = { verseIds: ids, index: 0 };
     reviewMode = false;
     saveState();

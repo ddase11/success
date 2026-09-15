@@ -163,8 +163,8 @@ a:focus-visible {
 .btn-large { width: 100%; min-height: 52px; font-size: calc(18px * var(--font-scale)); }
 .btn-small { min-height: 40px; font-size: calc(14px * var(--font-scale)); padding: 8px 12px; }
 
-.btn[aria-checked="true"].option-btn,
-.btn.rate-btn[aria-checked="true"] {
+.option-btn[aria-checked="true"],
+.rate-btn[aria-checked="true"] {
   background: var(--color-navy);
   color: var(--color-on-primary);
   border-color: var(--color-navy);
@@ -265,6 +265,67 @@ a:focus-visible {
   text-align: center;
 }
 .copyright-footer p { margin: 2px 0; }
+
+/* ---------- 말씀 추가 화면 ---------- */
+.add-verse-box {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 20px;
+}
+.add-verse-box h1 { color: var(--color-navy); font-size: calc(22px * var(--font-scale)); margin: 0 0 8px; }
+.add-verse-box .hint-text { margin-bottom: 16px; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.form-field label {
+  font-size: calc(14px * var(--font-scale));
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+.form-field input,
+.form-field textarea {
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: calc(16px * var(--font-scale));
+  font-family: inherit;
+  width: 100%;
+}
+.form-field textarea {
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.6;
+}
+.form-error {
+  color: var(--color-danger-text);
+  background: var(--color-danger-bg);
+  border: 1px solid #E8B4B4;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: calc(14px * var(--font-scale));
+  margin: 0 0 14px;
+}
+.form-success {
+  color: var(--color-navy);
+  background: var(--color-gold-soft);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: calc(14px * var(--font-scale));
+  margin: 0 0 14px;
+}
 
 /* ---------- 안내 화면 ---------- */
 .guide-box {
