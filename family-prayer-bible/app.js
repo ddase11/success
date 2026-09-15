@@ -1016,8 +1016,20 @@
   }
 
   if ('serviceWorker' in navigator) {
+    // 새 버전의 서비스워커가 설치되어 제어권을 넘겨받으면, 화면을 한 번 새로고침해
+    // 이미 열려 있던 탭도 최신 파일(app.js/styles.css/verses.js 등)을 바로 쓰게 한다.
+    // (이 처리가 없으면 예전에 방문한 기기에서 배포 후에도 계속 옛 화면이 보일 수 있다.)
+    var swRefreshed = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (swRefreshed) return;
+      swRefreshed = true;
+      window.location.reload();
+    });
+
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('service-worker.js').catch(function (e) {
+      navigator.serviceWorker.register('service-worker.js').then(function (reg) {
+        reg.update().catch(function () { /* 무시: 다음 방문 때 다시 시도됨 */ });
+      }).catch(function (e) {
         console.error('서비스워커 등록에 실패했습니다.', e);
       });
     });
