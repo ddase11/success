@@ -701,10 +701,7 @@
   var rate08 = $('rate-08');
   var rate10 = $('rate-10');
 
-  var reviewMode = false; // 완료 화면에서 '오늘 읽은 말씀 다시 보기'로 들어온 경우
-
   function enterReading() {
-    reviewMode = false;
     showScreen('reading');
     renderVerse();
     requestWakeLock();
@@ -740,9 +737,6 @@
     Speech.prepare(cleanText(verse.english), elEnglish, state.speechRate);
 
     resetSpeechButtons();
-
-    var alreadyDone = state.completedIds.indexOf(verseId) !== -1;
-    setNextEnabled(alreadyDone || reviewMode);
 
     btnPrev.disabled = state.session.index === 0;
 
@@ -780,10 +774,6 @@
     elSpeechStatus.textContent = text;
   }
 
-  function setNextEnabled(enabled) {
-    btnNext.disabled = !enabled;
-  }
-
   Speech.setOnStatusChange(function (status) {
     switch (status) {
       case 'playing':
@@ -812,8 +802,7 @@
         btnReplay.disabled = false;
         btnStop.disabled = true;
         updateSpeechStatus('영어 음성 재생이 끝났습니다.');
-        announce('영어 음성 재생이 끝났습니다. 다음 말씀으로 이동할 수 있습니다.');
-        setNextEnabled(true);
+        announce('영어 음성 재생이 끝났습니다.');
         var vId = currentSessionVerseId();
         if (vId) markCompleted(vId);
         saveState();
@@ -826,10 +815,6 @@
         btnReplay.disabled = false;
         btnStop.disabled = true;
         updateSpeechStatus('음성 재생 중 문제가 발생했습니다. 위의 영어 본문을 직접 읽으셔도 됩니다.');
-        setNextEnabled(true);
-        break;
-      case 'unsupported':
-        setNextEnabled(true);
         break;
       default:
         break;
@@ -863,7 +848,7 @@
   rate10.addEventListener('click', function () { setRate(1.0); });
 
   btnNext.addEventListener('click', withLock(function () {
-    if (btnNext.disabled || !state.session) return;
+    if (!state.session) return;
     Speech.cancel();
     var verseId = currentSessionVerseId();
     markCompleted(verseId);
@@ -935,7 +920,6 @@
   $('btn-review-today').addEventListener('click', withLock(function () {
     if (!lastSessionSummary) return;
     state.session = { verseIds: lastSessionSummary.verseIds.slice(), index: 0 };
-    reviewMode = true;
     saveState();
     showScreen('reading');
     renderVerse();
@@ -947,7 +931,6 @@
     var ids = buildSessionVerseIds(nextStart);
     if (ids.length === 0) ids = buildSessionVerseIds(1);
     state.session = { verseIds: ids, index: 0 };
-    reviewMode = false;
     saveState();
     enterReading();
   }));
