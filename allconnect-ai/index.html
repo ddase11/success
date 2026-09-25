@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AllConnectAI — 모든 시스템을 하나의 AI로 연결합니다</title>
+<meta name="description" content="AllConnectAI는 흩어진 사내 도구와 데이터를 하나의 API로 연결해, AI 에이전트가 실제 업무를 처리하도록 만드는 커넥티드 AI 플랫폼입니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;700&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0a'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%23fff'/%3E%3Ccircle cx='7' cy='8' r='2.4' fill='%23fff'/%3E%3Ccircle cx='25' cy='8' r='2.4' fill='%23fff'/%3E%3Ccircle cx='7' cy='24' r='2.4' fill='%23fff'/%3E%3Ccircle cx='25' cy='24' r='2.4' fill='%23fff'/%3E%3C/svg%3E">
+
+<style>
+:root{
+  /* Colors */
+  --color-jet-ink:#0a0a0a;
+  --color-charcoal:#151515;
+  --color-fog:#858585;
+  --color-pewter:#9d9d9d;
+  --color-steel:#545454;
+  --color-dove:#d5d9e2;
+  --color-cream:#f9f8f6;
+  --color-paper:#ffffff;
+  --color-sand:#f2ede5;
+  --color-slate:#3b3b3b;
+  --color-ember:#ff5f57;
+  --color-sunbeam:#ffbd2e;
+  --color-sprout:#28c840;
+
+  /* Type */
+  --font-sans:'Pretendard','universalSans',ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --font-display:'Pretendard','universalSansDisplay',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --font-mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+
+  --text-caption:12px;
+  --text-body-sm:14px;
+  --text-body:16px;
+  --text-heading-sm:24px;
+  --text-subheading:30px;
+  --text-heading:48px;
+  --text-heading-lg:60px;
+  --text-display:72px;
+
+  /* Spacing */
+  --spacing-4:4px; --spacing-8:8px; --spacing-12:12px; --spacing-16:16px;
+  --spacing-20:20px; --spacing-24:24px; --spacing-32:32px; --spacing-40:40px;
+  --spacing-48:48px; --spacing-64:64px; --spacing-96:96px; --spacing-144:144px;
+
+  /* Layout */
+  --page-max-width:1200px;
+  --section-gap:80px;
+  --card-padding:40px;
+  --element-gap:12px;
+
+  /* Radius */
+  --radius-inputs:6px;
+  --radius-smallcards:8px;
+  --radius-xl:12px;
+  --radius-cards:16px;
+  --radius-full:9999px;
+
+  /* Shadows */
+  --shadow-subtle:rgba(10,10,10,.15) 0 0 0 1px;
+  --shadow-xl:rgba(0,0,0,.1) 0 20px 25px -5px, rgba(0,0,0,.1) 0 8px 10px -6px;
+  --shadow-subtle-2:rgba(0,0,0,.06) 0 0 0 1px, rgba(15,23,42,.18) 0 18px 40px -24px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;scroll-padding-top:96px;overflow-x:clip;}
+body{
+  font-family:var(--font-sans);
+  background:var(--color-paper);
+  color:var(--color-jet-ink);
+  font-weight:400;
+  font-size:var(--text-body);
+  line-height:1.5;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none;}
+::selection{background:var(--color-sand);color:var(--color-jet-ink);}
+
+.container{max-width:var(--page-max-width);margin:0 auto;padding:0 var(--spacing-24);}
+
+/* ── Type roles ─────────────────────────────── */
+.display{font-family:var(--font-display);font-weight:400;font-size:var(--text-display);line-height:1.06;letter-spacing:-.025em;}
+.heading{font-family:var(--font-display);font-weight:400;font-size:var(--text-heading);line-height:1.08;letter-spacing:-.025em;}
+.heading-sm{font-family:var(--font-display);font-weight:500;font-size:var(--text-heading-sm);line-height:1.33;letter-spacing:-.025em;}
+.subheading{font-family:var(--font-display);font-weight:400;font-size:var(--text-subheading);line-height:1.2;letter-spacing:-.025em;}
+.lead{font-size:18px;line-height:1.63;color:var(--color-fog);}
+.body-sm{font-size:var(--text-body-sm);line-height:1.43;color:var(--color-fog);}
+.mono{font-family:var(--font-mono);letter-spacing:-.01em;}
+.eyebrow{font-family:var(--font-mono);font-size:var(--text-caption);line-height:1.66;color:var(--color-pewter);text-transform:uppercase;letter-spacing:.06em;}
+
+/* ── Buttons ────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--font-sans);font-size:var(--text-body-sm);font-weight:500;line-height:20px;
+  padding:12px 20px;border-radius:var(--radius-full);border:1px solid transparent;
+  cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease,opacity .2s ease;
+  white-space:nowrap;
+}
+.btn-primary{background:var(--color-jet-ink);color:var(--color-paper);}
+.btn-primary:hover{opacity:.86;}
+.btn-ghost{background:transparent;color:var(--color-jet-ink);}
+.btn-ghost:hover{border-color:var(--color-dove);background:var(--color-cream);}
+.btn-nav{background:var(--color-paper);color:var(--color-jet-ink);border:1px solid var(--color-dove);padding:6px 12px;font-size:13px;}
+.btn-nav:hover{background:var(--color-cream);}
+.btn-nav-primary{padding:6px 14px;font-size:13px;}
+.btn-block{width:100%;}
+
+/* ── Pills & tags ───────────────────────────── */
+.pill{display:inline-flex;align-items:center;gap:8px;border-radius:var(--radius-full);padding:6px 14px;font-size:var(--text-caption);font-weight:500;background:var(--color-cream);color:var(--color-jet-ink);border:1px solid var(--color-dove);}
+.tag-beta{display:inline-block;background:var(--color-sand);color:var(--color-jet-ink);border-radius:var(--radius-full);padding:2px 8px;font-size:var(--text-caption);font-weight:500;}
+.dot{width:6px;height:6px;border-radius:var(--radius-full);background:var(--color-sprout);display:inline-block;}
+
+/* ── Nav ────────────────────────────────────── */
+header.nav{position:fixed;top:0;left:0;width:100%;z-index:100;height:64px;display:flex;align-items:center;background:rgba(255,255,255,.72);transition:box-shadow .3s ease,border-color .3s ease,backdrop-filter .3s ease;border-bottom:1px solid transparent;}
+header.nav.scrolled{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom-color:var(--color-dove);}
+.nav-wrap{display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-24);width:100%;}
+.brand{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:500;letter-spacing:-.02em;}
+.brand svg{display:block;}
+.nav-links{display:flex;align-items:center;gap:var(--spacing-24);list-style:none;}
+.nav-links a{font-size:var(--text-body-sm);font-weight:500;color:var(--color-fog);transition:color .2s ease;}
+.nav-links a:hover{color:var(--color-jet-ink);}
+.nav-actions{display:flex;align-items:center;gap:var(--spacing-8);}
+
+/* ── Hero ───────────────────────────────────── */
+.hero{padding:calc(64px + var(--spacing-96)) 0 var(--spacing-64);text-align:center;position:relative;}
+.hero-inner{display:flex;flex-direction:column;align-items:center;position:relative;z-index:1;}
+.hero-inner>*{max-width:100%;}
+.hero h1{max-width:900px;margin:var(--spacing-24) 0 0;}
+.hero h1 em{font-style:normal;color:var(--color-fog);}
+.hero p.lead{max-width:600px;margin-top:var(--spacing-24);}
+.hero-actions{display:flex;gap:var(--element-gap);margin-top:var(--spacing-32);flex-wrap:wrap;justify-content:center;}
+.hero-meta{display:flex;gap:var(--spacing-24);margin-top:var(--spacing-20);font-size:var(--text-caption);color:var(--color-pewter);flex-wrap:wrap;justify-content:center;}
+
+/* Orb */
+.orb{position:absolute;border-radius:var(--radius-full);filter:blur(64px);pointer-events:none;z-index:0;}
+.orb-a{width:520px;height:520px;background:radial-gradient(circle,#ff8868 0%,rgba(255,136,104,0) 70%);opacity:.18;top:-120px;left:50%;transform:translateX(-58%);}
+.orb-b{width:420px;height:420px;background:radial-gradient(circle,#ffa888 0%,rgba(255,168,136,0) 70%);opacity:.22;right:-80px;bottom:-140px;}
+
+/* ── Terminal mock ──────────────────────────── */
+.stage{position:relative;margin-top:var(--spacing-48);width:100%;max-width:100%;align-self:stretch;}
+.terminal{position:relative;z-index:1;max-width:100%;background:var(--color-charcoal);border-radius:var(--radius-xl);overflow:hidden;text-align:left;}
+.terminal-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
+.tl{width:10px;height:10px;border-radius:var(--radius-full);}
+.tl-r{background:var(--color-ember);} .tl-y{background:var(--color-sunbeam);} .tl-g{background:var(--color-sprout);}
+.terminal-title{font-family:var(--font-mono);font-size:11px;color:#6f6f6f;margin-left:8px;}
+.terminal pre{margin:0;padding:24px;font-family:var(--font-mono);font-size:13px;line-height:1.85;color:#e6e6e6;overflow-x:auto;}
+.terminal code{white-space:pre;}
+.c-key{color:#9cd1ff;} .c-str{color:#91c17a;} .c-com{color:#6a6a6a;} .c-fn{color:#ffd79a;} .c-num{color:#d7a3ff;}
+.tabs{display:flex;gap:6px;margin-top:var(--spacing-12);justify-content:flex-start;flex-wrap:wrap;}
+.tab{font-family:var(--font-mono);font-size:13px;padding:6px 12px;border-radius:var(--radius-full);background:transparent;color:var(--color-fog);border:none;cursor:pointer;transition:background .2s ease,color .2s ease;}
+.tab[aria-selected="true"]{background:var(--color-jet-ink);color:var(--color-paper);}
+
+/* ── Logo cloud ─────────────────────────────── */
+.logo-cloud{padding:var(--spacing-48) 0;border-top:1px solid var(--color-dove);border-bottom:1px solid var(--color-dove);}
+.logo-cloud p{text-align:center;font-family:var(--font-mono);font-size:var(--text-caption);color:var(--color-pewter);letter-spacing:.06em;text-transform:uppercase;margin-bottom:var(--spacing-24);}
+.logo-row{display:flex;justify-content:center;align-items:center;gap:var(--spacing-48);flex-wrap:wrap;}
+.logo-row span{font-size:18px;font-weight:500;color:var(--color-pewter);letter-spacing:-.02em;transition:color .2s ease;}
+.logo-row span:hover{color:var(--color-jet-ink);}
+
+/* ── Sections ───────────────────────────────── */
+section.block{padding:var(--section-gap) 0;}
+.section-head{max-width:720px;margin-bottom:var(--spacing-48);}
+.section-head.center{margin-left:auto;margin-right:auto;text-align:center;}
+.section-head .eyebrow{display:block;margin-bottom:var(--spacing-12);}
+.section-head p{margin-top:var(--spacing-16);}
+
+/* ── Cards ──────────────────────────────────── */
+.grid{display:grid;gap:var(--spacing-24);}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.card{background:var(--color-cream);border-radius:var(--radius-cards);padding:var(--spacing-32);transition:background .25s ease,transform .25s ease;}
+.card:hover{background:var(--color-sand);transform:translateY(-2px);}
+.card .icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--color-jet-ink);margin-bottom:var(--spacing-24);}
+.card h3{font-size:18px;font-weight:500;letter-spacing:-.02em;margin-bottom:var(--spacing-8);}
+.card p{font-size:var(--text-body-sm);line-height:1.6;color:var(--color-fog);}
+.card .mono-note{display:block;margin-top:var(--spacing-16);font-family:var(--font-mono);font-size:11px;color:var(--color-pewter);}
+
+/* ── Split feature ──────────────────────────── */
+.split{display:grid;grid-template-columns:1fr 1.1fr;gap:var(--spacing-64);align-items:center;}
+.split ul{list-style:none;margin-top:var(--spacing-32);display:flex;flex-direction:column;gap:var(--spacing-16);}
+.split ul li{display:flex;gap:12px;align-items:flex-start;font-size:var(--text-body-sm);line-height:1.5;}
+.split ul svg{flex-shrink:0;margin-top:2px;}
+.split ul strong{font-weight:500;display:block;}
+.split ul span{color:var(--color-fog);}
+.split-visual{position:relative;}
+
+/* ── Stats ──────────────────────────────────── */
+.stats{border-top:1px solid var(--color-dove);border-bottom:1px solid var(--color-dove);padding:var(--spacing-64) 0;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--spacing-32);}
+.stat{display:flex;flex-direction:column;gap:6px;}
+.stat b{font-family:var(--font-display);font-size:var(--text-heading);line-height:1.06;letter-spacing:-.025em;font-weight:400;}
+.stat span{font-size:var(--text-caption);color:var(--color-pewter);}
+
+/* ── Work / cases ───────────────────────────── */
+.case{display:block;}
+.case .thumb{height:200px;border-radius:var(--radius-cards);overflow:hidden;position:relative;background:var(--color-cream);}
+.case .thumb::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 120% at 20% 0%,rgba(255,136,104,.32) 0%,rgba(255,136,104,0) 55%);}
+.case .thumb .art{position:absolute;inset:0;width:100%;height:100%;z-index:1;color:var(--color-pewter);}
+.case .thumb .chip{position:absolute;left:16px;bottom:16px;z-index:2;font-family:var(--font-mono);font-size:11px;background:var(--color-paper);border:1px solid var(--color-dove);border-radius:var(--radius-full);padding:4px 10px;}
+.case h4{margin-top:var(--spacing-16);font-size:var(--text-body);font-weight:500;letter-spacing:-.02em;}
+.case .meta{margin-top:4px;font-size:11px;color:var(--color-fog);}
+.case:hover .thumb{transform:translateY(-2px);}
+.case .thumb{transition:transform .25s ease;}
+
+/* ── Testimonials ───────────────────────────── */
+.quote{background:var(--color-cream);border-radius:var(--radius-cards);padding:var(--spacing-32);display:flex;flex-direction:column;justify-content:space-between;gap:var(--spacing-24);}
+.quote p{font-size:var(--text-body);line-height:1.6;letter-spacing:-.01em;}
+.quote .who{display:flex;align-items:center;gap:12px;}
+.quote .avatar{width:36px;height:36px;border-radius:var(--radius-full);background:var(--color-sand);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0;}
+.quote .who strong{display:block;font-size:13px;font-weight:500;}
+.quote .who span{font-size:11px;color:var(--color-pewter);}
+
+/* ── Pricing ────────────────────────────────── */
+.tier{background:var(--color-cream);border-radius:var(--radius-cards);padding:var(--card-padding);display:flex;flex-direction:column;}
+.tier.featured{box-shadow:var(--shadow-subtle-2);background:var(--color-paper);}
+.tier h3{font-family:var(--font-display);font-size:var(--text-heading-sm);font-weight:500;letter-spacing:-.025em;}
+.tier .price{margin-top:var(--spacing-16);font-family:var(--font-display);font-size:40px;line-height:1;letter-spacing:-.025em;font-weight:400;}
+.tier .price small{font-size:var(--text-body-sm);color:var(--color-fog);font-family:var(--font-sans);letter-spacing:0;}
+.tier .desc{margin-top:var(--spacing-12);font-size:var(--text-body-sm);color:var(--color-fog);line-height:1.5;}
+.tier ul{list-style:none;margin:var(--spacing-24) 0 var(--spacing-32);display:flex;flex-direction:column;gap:var(--spacing-8);}
+.tier li{display:flex;gap:10px;align-items:flex-start;font-size:var(--text-body-sm);line-height:20px;}
+.tier li svg{flex-shrink:0;margin-top:2px;}
+.tier .btn{margin-top:auto;}
+
+/* ── FAQ ────────────────────────────────────── */
+.faq{max-width:760px;margin:0 auto;display:flex;flex-direction:column;}
+.faq details{border-bottom:1px solid var(--color-dove);}
+.faq summary{list-style:none;cursor:pointer;padding:var(--spacing-24) 0;font-size:var(--text-body);font-weight:500;letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:center;gap:var(--spacing-16);}
+.faq summary::-webkit-details-marker{display:none;}
+.faq summary::after{content:"";width:12px;height:12px;flex-shrink:0;background:currentColor;color:var(--color-fog);transition:transform .25s ease;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat;}
+.faq details[open] summary::after{transform:rotate(45deg);}
+.faq p{padding:0 0 var(--spacing-24);font-size:var(--text-body-sm);line-height:1.7;color:var(--color-fog);max-width:640px;}
+
+/* ── Contact ────────────────────────────────── */
+.contact-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:var(--spacing-64);align-items:start;}
+.contact-list{list-style:none;margin-top:var(--spacing-32);display:flex;flex-direction:column;gap:var(--spacing-12);}
+.contact-list li{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--color-dove);border-radius:var(--radius-cards);}
+.contact-list .num{width:28px;height:28px;border-radius:var(--radius-full);background:var(--color-sand);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;flex-shrink:0;}
+.contact-list strong{display:block;font-size:var(--text-body-sm);font-weight:500;}
+.contact-list span{font-size:11px;color:var(--color-fog);}
+.form{background:var(--color-cream);border-radius:var(--radius-cards);padding:var(--card-padding);}
+.form-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--spacing-24);}
+.form-top .mono{font-size:11px;color:var(--color-pewter);}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:var(--spacing-16);}
+.field label{font-size:var(--text-caption);color:var(--color-steel);font-weight:500;}
+.field input,.field textarea,.field select{
+  font-family:var(--font-sans);font-size:var(--text-body-sm);color:var(--color-jet-ink);
+  background:var(--color-paper);border:1px solid var(--color-dove);border-radius:var(--radius-inputs);
+  padding:11px 13px;outline:none;transition:border-color .2s ease,box-shadow .2s ease;width:100%;
+}
+.field textarea{min-height:104px;resize:vertical;}
+.field input::placeholder,.field textarea::placeholder{color:var(--color-pewter);}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--color-jet-ink);box-shadow:var(--shadow-subtle);}
+.form-note{margin-top:var(--spacing-12);font-size:11px;color:var(--color-pewter);text-align:center;}
+.form-status{margin-top:var(--spacing-12);font-size:var(--text-caption);color:var(--color-steel);text-align:center;min-height:16px;}
+
+/* ── CTA band ───────────────────────────────── */
+.cta{background:var(--color-cream);border-radius:var(--radius-cards);padding:var(--spacing-96) var(--spacing-40);text-align:center;position:relative;overflow:hidden;}
+.cta .inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;}
+.cta p{margin-top:var(--spacing-16);max-width:520px;}
+.cta .hero-actions{margin-top:var(--spacing-32);}
+
+/* ── Footer ─────────────────────────────────── */
+footer{border-top:1px solid var(--color-dove);padding:var(--spacing-64) 0 var(--spacing-48);}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:var(--spacing-32);}
+.foot-grid h5{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--color-pewter);margin-bottom:var(--spacing-16);font-weight:400;}
+.foot-grid ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.foot-grid a{font-size:var(--text-body-sm);color:var(--color-fog);transition:color .2s ease;}
+.foot-grid a:hover{color:var(--color-jet-ink);}
+.foot-brand p{margin-top:var(--spacing-16);font-size:var(--text-body-sm);color:var(--color-fog);max-width:280px;line-height:1.6;}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;gap:var(--spacing-16);margin-top:var(--spacing-48);padding-top:var(--spacing-24);border-top:1px solid var(--color-dove);flex-wrap:wrap;}
+.foot-bottom p{font-size:var(--text-caption);color:var(--color-pewter);}
+
+/* ── Reveal ─────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);}
+.reveal.in{opacity:1;transform:none;}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none;}
+  html{scroll-behavior:auto;}
+}
+
+/* ── Responsive ─────────────────────────────── */
+@media (max-width:1024px){
+  .grid-4{grid-template-columns:repeat(2,1fr);}
+  .split{grid-template-columns:1fr;gap:var(--spacing-40);}
+  .contact-grid{grid-template-columns:1fr;gap:var(--spacing-40);}
+  .foot-grid{grid-template-columns:1fr 1fr;}
+  :root{--text-display:56px;--text-heading:40px;}
+}
+@media (max-width:768px){
+  :root{--text-display:40px;--text-heading:32px;--text-subheading:24px;--section-gap:64px;--card-padding:28px;}
+  .nav-links{display:none;}
+  .hero{padding-top:calc(64px + var(--spacing-48));text-align:left;}
+  .hero-inner{align-items:flex-start;}
+  .hero-actions,.hero-meta{justify-content:flex-start;}
+  .section-head.center{text-align:left;}
+  .grid-3,.grid-2,.grid-4{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:var(--spacing-24);}
+  .cta{padding:var(--spacing-48) var(--spacing-24);}
+  .cta .inner{align-items:flex-start;text-align:left;}
+  .foot-grid{grid-template-columns:1fr;}
+  .terminal pre{font-size:12px;padding:20px;}
+  .nav-actions .btn-nav{display:none;}
+  .brand span{font-size:14px;}
+  .orb-a{width:320px;height:320px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Nav ───────────────────────────────────── -->
+<header class="nav" id="nav">
+  <div class="container nav-wrap">
+    <a href="#top" class="brand" aria-label="AllConnectAI 홈">
+      <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="9" fill="#0a0a0a"/>
+        <circle cx="16" cy="16" r="3.4" fill="#fff"/>
+        <circle cx="7.5" cy="8.5" r="2.1" fill="#fff"/>
+        <circle cx="24.5" cy="8.5" r="2.1" fill="#fff"/>
+        <circle cx="7.5" cy="23.5" r="2.1" fill="#fff"/>
+        <circle cx="24.5" cy="23.5" r="2.1" fill="#fff"/>
+        <path d="M9 10.5 14 14.5M23 10.5 18 14.5M9 21.5 14 17.5M23 21.5 18 17.5" stroke="#fff" stroke-width="1.2" opacity=".55"/>
+      </svg>
+      <span>AllConnectAI</span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#product">제품</a></li>
+        <li><a href="#platform">플랫폼</a></li>
+        <li><a href="#work">사례</a></li>
+        <li><a href="#pricing">요금제</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <a href="#contact" class="btn btn-nav">도입 문의</a>
+      <a href="#contact" class="btn btn-primary btn-nav-primary">무료로 시작하기</a>
+    </div>
+  </div>
+</header>
+
+<!-- ── Hero ──────────────────────────────────── -->
+<main id="top">
+<section class="hero">
+  <span class="orb orb-a" aria-hidden="true"></span>
+  <div class="container hero-inner">
+    <span class="pill"><span class="tag-beta">Beta</span> AllConnect Agent Builder 공개</span>
+    <h1 class="display">모든 시스템을<br>하나의 AI로 <em>연결합니다</em></h1>
+    <p class="lead">흩어진 사내 도구, 데이터, 업무 흐름을 단 하나의 API로 묶습니다. AllConnectAI의 에이전트는 말로 답하는 데서 멈추지 않고, 실제 업무를 끝까지 처리합니다.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn-primary">무료로 시작하기</a>
+      <a href="#platform" class="btn btn-ghost">플랫폼 살펴보기 →</a>
+    </div>
+    <div class="hero-meta">
+      <span><span class="dot" aria-hidden="true"></span> 모든 시스템 정상 가동</span>
+      <span class="mono">200+ 커넥터</span>
+      <span class="mono">평균 응답 &lt;200ms</span>
+      <span class="mono">SOC2 준비 완료</span>
+    </div>
+
+    <!-- Terminal -->
+    <div class="stage reveal">
+      <span class="orb orb-b" aria-hidden="true"></span>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
+          <span class="terminal-title" id="term-title">agent.py — allconnect</span>
+        </div>
+        <pre><code id="code-python"><span class="c-com"># 사내 도구 4개를 하나의 에이전트로 연결합니다</span>
+<span class="c-key">from</span> allconnect <span class="c-key">import</span> Agent, connect
+
+agent = <span class="c-fn">Agent</span>(
+    model=<span class="c-str">"allconnect-1"</span>,
+    tools=[
+        <span class="c-fn">connect</span>(<span class="c-str">"slack"</span>), <span class="c-fn">connect</span>(<span class="c-str">"notion"</span>),
+        <span class="c-fn">connect</span>(<span class="c-str">"salesforce"</span>), <span class="c-fn">connect</span>(<span class="c-str">"gsheets"</span>),
+    ],
+)
+
+result = agent.<span class="c-fn">run</span>(<span class="c-str">"이번 주 신규 리드 정리해서 영업팀 채널에 보고해줘"</span>)
+<span class="c-fn">print</span>(result.summary)  <span class="c-com"># ✓ 리드 <span class="c-num">128</span>건 정리 · 보고 완료 (<span class="c-num">2.4</span>s)</span></code></pre>
+        <pre hidden><code id="code-typescript"><span class="c-com">// 사내 도구 4개를 하나의 에이전트로 연결합니다</span>
+<span class="c-key">import</span> { Agent, connect } <span class="c-key">from</span> <span class="c-str">"@allconnect/sdk"</span>;
+
+<span class="c-key">const</span> agent = <span class="c-key">new</span> <span class="c-fn">Agent</span>({
+  model: <span class="c-str">"allconnect-1"</span>,
+  tools: [
+    <span class="c-fn">connect</span>(<span class="c-str">"slack"</span>), <span class="c-fn">connect</span>(<span class="c-str">"notion"</span>),
+    <span class="c-fn">connect</span>(<span class="c-str">"salesforce"</span>), <span class="c-fn">connect</span>(<span class="c-str">"gsheets"</span>),
+  ],
+});
+
+<span class="c-key">const</span> result = <span class="c-key">await</span> agent.<span class="c-fn">run</span>(<span class="c-str">"이번 주 신규 리드 정리해서 영업팀 채널에 보고해줘"</span>);
+console.<span class="c-fn">log</span>(result.summary); <span class="c-com">// ✓ 리드 <span class="c-num">128</span>건 정리 · 보고 완료 (<span class="c-num">2.4</span>s)</span></code></pre>
+        <pre hidden><code id="code-curl"><span class="c-com"># 커넥터 연결부터 실행까지, 요청 한 번</span>
+curl https://api.allconnect.ai/v1/agents/run \
+  -H <span class="c-str">"Authorization: Bearer $ALLCONNECT_API_KEY"</span> \
+  -H <span class="c-str">"Content-Type: application/json"</span> \
+  -d <span class="c-str">'{
+    "model": "allconnect-1",
+    "tools": ["slack", "notion", "salesforce", "gsheets"],
+    "input": "이번 주 신규 리드 정리해서 영업팀 채널에 보고해줘"
+  }'</span>
+
+<span class="c-com"># ✓ 리드 <span class="c-num">128</span>건 정리 · 보고 완료 (<span class="c-num">2.4</span>s)</span></code></pre>
+      </div>
+      <div class="tabs" role="tablist" aria-label="코드 예시 언어">
+        <button class="tab" role="tab" aria-selected="true" data-lang="python" data-file="agent.py — allconnect">Python</button>
+        <button class="tab" role="tab" aria-selected="false" data-lang="typescript" data-file="agent.ts — allconnect">TypeScript</button>
+        <button class="tab" role="tab" aria-selected="false" data-lang="curl" data-file="run.sh — allconnect">cURL</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Logo cloud ────────────────────────────── -->
+<section class="logo-cloud">
+  <div class="container">
+    <p>함께 성장하는 파트너</p>
+    <div class="logo-row">
+      <span>TechFlow</span><span>Nexus AI</span><span>CloudBridge</span><span>DataPulse</span><span>CreativeHub</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Services ──────────────────────────────── -->
+<section class="block" id="product">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow">Product</span>
+      <h2 class="heading">연결이 곧 제품입니다</h2>
+      <p class="lead">도입 첫날부터 쓸 수 있는 네 가지 모듈. 각각 따로 써도, 하나의 워크플로로 묶어도 동작합니다.</p>
+    </div>
+    <div class="grid grid-4">
+      <article class="card reveal">
+        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h3>AI 에이전트 빌더</h3>
+        <p>코드 없이도, SDK로도 만들 수 있는 업무 에이전트. 권한·승인 절차까지 그대로 반영합니다.</p>
+        <span class="mono-note">no-code + SDK</span>
+      </article>
+      <article class="card reveal">
+        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01"/></svg></div>
+        <h3>200+ 커넥터</h3>
+        <p>Slack, Notion, Salesforce, ERP, 사내 DB까지. 인증과 동기화는 플랫폼이 알아서 처리합니다.</p>
+        <span class="mono-note">OAuth · Webhook · SQL</span>
+      </article>
+      <article class="card reveal">
+        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 17V7M10 17V11M16 17V9M22 17v-4"/></svg></div>
+        <h3>업무 자동화 워크플로</h3>
+        <p>반복 업무를 트리거·조건·액션으로 구성하고, 실패 시 재시도와 알림까지 자동으로 이어집니다.</p>
+        <span class="mono-note">trigger → action</span>
+      </article>
+      <article class="card reveal">
+        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>거버넌스 &amp; 감사</h3>
+        <p>모든 호출과 데이터 접근을 기록합니다. 역할 기반 권한, 데이터 지역 지정, 감사 로그 내보내기.</p>
+        <span class="mono-note">RBAC · Audit log</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ── Split feature ─────────────────────────── -->
+<section class="block" id="platform">
+  <div class="container split">
+    <div class="reveal">
+      <span class="eyebrow">Platform</span>
+      <h2 class="heading" style="margin-top:12px;">하나의 API,<br>모든 연결.</h2>
+      <p class="lead" style="margin-top:20px;">연동마다 다른 인증, 다른 스키마, 다른 한계. AllConnectAI는 그 차이를 한 겹 아래로 숨기고 동일한 인터페이스만 남깁니다.</p>
+      <ul>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg><span><strong>표준화된 도구 호출</strong>커넥터가 늘어도 코드는 그대로입니다.</span></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg><span><strong>실시간 동기화</strong>변경 사항을 웹훅으로 밀어 넣어 지연 없이 반영합니다.</span></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg><span><strong>사내망 배포 지원</strong>VPC 전용 배포와 온프레미스 옵션을 제공합니다.</span></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg><span><strong>투명한 관측</strong>토큰, 지연시간, 실패율을 대시보드 한 곳에서 확인합니다.</span></li>
+      </ul>
+      <div class="hero-actions" style="justify-content:flex-start;">
+        <a href="#contact" class="btn btn-primary">API 키 받기</a>
+        <a href="#work" class="btn btn-ghost">도입 사례 보기 →</a>
+      </div>
+    </div>
+    <div class="split-visual reveal">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
+          <span class="terminal-title">connectors.log</span>
+        </div>
+        <pre><code><span class="c-com">$ allconnect connectors sync --all</span>
+
+<span class="c-str">✓</span> slack          <span class="c-com">연결됨</span>   <span class="c-num">42ms</span>
+<span class="c-str">✓</span> notion         <span class="c-com">연결됨</span>   <span class="c-num">61ms</span>
+<span class="c-str">✓</span> salesforce     <span class="c-com">연결됨</span>  <span class="c-num">118ms</span>
+<span class="c-str">✓</span> google-sheets  <span class="c-com">연결됨</span>   <span class="c-num">73ms</span>
+<span class="c-str">✓</span> postgres/main  <span class="c-com">연결됨</span>   <span class="c-num">29ms</span>
+
+<span class="c-key">synced</span> <span class="c-num">5</span> connectors · <span class="c-num">0</span> errors · <span class="c-num">323ms</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats ─────────────────────────────────── -->
+<section class="stats">
+  <div class="container stats-grid">
+    <div class="stat reveal"><b>150+</b><span>도입 프로젝트</span></div>
+    <div class="stat reveal"><b>98%</b><span>고객 재계약률</span></div>
+    <div class="stat reveal"><b>1M+</b><span>일 API 호출</span></div>
+    <div class="stat reveal"><b>24h</b><span>기술 지원 응답</span></div>
+  </div>
+</section>
+
+<!-- ── Work ──────────────────────────────────── -->
+<section class="block" id="work">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Case studies</span>
+      <h2 class="heading">최근 연결한 것들</h2>
+    </div>
+    <div class="grid grid-3">
+      <a class="case reveal" href="#contact">
+        <div class="thumb"><svg class="art" viewBox="0 0 320 200" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1" opacity=".7"><path d="M160 100 72 56M160 100 248 56M160 100 72 144M160 100 248 144M160 100 160 34M160 100 160 166"/></g><g fill="#0a0a0a"><circle cx="160" cy="100" r="6"/></g><g fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="72" cy="56" r="9"/><circle cx="248" cy="56" r="9"/><circle cx="72" cy="144" r="9"/><circle cx="248" cy="144" r="9"/><circle cx="160" cy="34" r="9"/><circle cx="160" cy="166" r="9"/></g></svg><span class="chip">B2B SaaS</span></div>
+        <h4>AI 기반 고객관리 자동화</h4>
+        <p class="meta">CRM · 리드 스코어링 · 리포팅</p>
+      </a>
+      <a class="case reveal" href="#contact">
+        <div class="thumb"><svg class="art" viewBox="0 0 320 200" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1" opacity=".7"><path d="M160 100 72 56M160 100 248 56M160 100 72 144M160 100 248 144M160 100 160 34M160 100 160 166"/></g><g fill="#0a0a0a"><circle cx="160" cy="100" r="6"/></g><g fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="72" cy="56" r="9"/><circle cx="248" cy="56" r="9"/><circle cx="72" cy="144" r="9"/><circle cx="248" cy="144" r="9"/><circle cx="160" cy="34" r="9"/><circle cx="160" cy="166" r="9"/></g></svg><span class="chip">Commerce</span></div>
+        <h4>주문·CS 통합 에이전트</h4>
+        <p class="meta">ERP 연동 · 문의 자동 응대</p>
+      </a>
+      <a class="case reveal" href="#contact">
+        <div class="thumb"><svg class="art" viewBox="0 0 320 200" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1" opacity=".7"><path d="M160 100 72 56M160 100 248 56M160 100 72 144M160 100 248 144M160 100 160 34M160 100 160 166"/></g><g fill="#0a0a0a"><circle cx="160" cy="100" r="6"/></g><g fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="72" cy="56" r="9"/><circle cx="248" cy="56" r="9"/><circle cx="72" cy="144" r="9"/><circle cx="248" cy="144" r="9"/><circle cx="160" cy="34" r="9"/><circle cx="160" cy="166" r="9"/></g></svg><span class="chip">Enterprise</span></div>
+        <h4>사내 지식 검색 허브</h4>
+        <p class="meta">문서 통합 · 권한 기반 검색</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Testimonials ──────────────────────────── -->
+<section class="block" id="testimonials">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow">Testimonials</span>
+      <h2 class="heading">고객의 목소리</h2>
+    </div>
+    <div class="grid grid-3">
+      <figure class="quote reveal">
+        <p>“연동 하나 붙이는 데 몇 주씩 걸리던 일이 하루로 줄었습니다. 팀이 다시 제품에 집중하게 됐어요.”</p>
+        <figcaption class="who"><span class="avatar">김</span><span><strong>김서연</strong><span>MarketPro · CEO</span></span></figcaption>
+      </figure>
+      <figure class="quote reveal">
+        <p>“에이전트가 실제로 업무를 끝내줍니다. 답변만 하는 챗봇과는 완전히 다른 물건이었습니다.”</p>
+        <figcaption class="who"><span class="avatar">이</span><span><strong>이준혁</strong><span>CloudSync · CTO</span></span></figcaption>
+      </figure>
+      <figure class="quote reveal">
+        <p>“감사 로그와 권한 모델이 처음부터 갖춰져 있어 보안 검토를 한 번에 통과했습니다.”</p>
+        <figcaption class="who"><span class="avatar">박</span><span><strong>박지민</strong><span>DesignLab · Head of Ops</span></span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ── Pricing ───────────────────────────────── -->
+<section class="block" id="pricing">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow">Pricing</span>
+      <h2 class="heading">필요한 만큼만</h2>
+      <p class="lead">숨은 비용 없이, 호출량과 커넥터 수로만 계산합니다.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="tier reveal">
+        <h3>Starter</h3>
+        <div class="price">₩0 <small>/ 월</small></div>
+        <p class="desc">첫 연결을 실험해 보는 팀을 위한 무료 플랜.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg>커넥터 3개</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg>월 10,000 호출</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg>커뮤니티 지원</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost btn-block" style="border-color:var(--color-dove);">무료로 시작</a>
+      </div>
+      <div class="tier featured reveal">
+        <h3>Growth <span class="tag-beta" style="vertical-align:middle;">인기</span></h3>
+        <div class="price">₩490,000 <small>/ 월</small></div>
+        <p class="desc">실제 업무에 에이전트를 붙이는 성장 단계 팀.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg>커넥터 무제한</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg>월 1,000,000 호출</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg>워크플로 자동화 · 대시보드</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg>전담 채널 지원 (24h)</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary btn-block">지금 시작하기</a>
+      </div>
+      <div class="tier reveal">
+        <h3>Enterprise</h3>
+        <div class="price">맞춤 견적</div>
+        <p class="desc">보안 검토와 사내망 배포가 필요한 조직.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg>VPC · 온프레미스 배포</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg>SSO · RBAC · 감사 로그</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M5 12l5 5L19 7"/></svg>SLA 99.9% 및 전담 매니저</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost btn-block" style="border-color:var(--color-dove);">영업팀 문의</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ───────────────────────────────────── -->
+<section class="block" id="faq">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow">FAQ</span>
+      <h2 class="heading">자주 묻는 질문</h2>
+    </div>
+    <div class="faq reveal">
+      <details open>
+        <summary>도입까지 얼마나 걸리나요?</summary>
+        <p>표준 커넥터만 사용하는 경우 보통 1~2일이면 첫 워크플로가 동작합니다. 사내 시스템 맞춤 연동이 포함되면 평균 2주 내외로 진행합니다.</p>
+      </details>
+      <details>
+        <summary>우리 데이터가 모델 학습에 쓰이나요?</summary>
+        <p>아닙니다. 고객 데이터는 학습에 사용되지 않으며, 저장 위치(리전)와 보관 기간을 조직이 직접 지정할 수 있습니다.</p>
+      </details>
+      <details>
+        <summary>원하는 시스템 커넥터가 없으면요?</summary>
+        <p>커스텀 커넥터 SDK로 직접 만들 수 있고, 요청 주시면 저희 팀이 함께 개발합니다. Enterprise 플랜에서는 커스텀 커넥터 개발이 포함됩니다.</p>
+      </details>
+      <details>
+        <summary>기존 자동화 도구와 함께 쓸 수 있나요?</summary>
+        <p>가능합니다. 웹훅과 REST API를 제공하므로 기존 RPA·워크플로 도구의 한 단계로 AllConnectAI를 호출해 사용할 수 있습니다.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ── Contact ───────────────────────────────── -->
+<section class="block" id="contact">
+  <div class="container contact-grid">
+    <div class="reveal">
+      <span class="eyebrow">Contact</span>
+      <h2 class="heading" style="margin-top:12px;">무엇을<br>연결해 드릴까요?</h2>
+      <p class="lead" style="margin-top:20px;">사용 중인 도구와 해결하고 싶은 업무만 알려주세요. 24시간 이내에 전문 컨설턴트가 구성안을 정리해 회신드립니다.</p>
+      <ul class="contact-list">
+        <li><span class="num">01</span><span><strong>무료 진단</strong><span>현재 업무 흐름 분석 후 연결 지점 제안</span></span></li>
+        <li><span class="num">02</span><span><strong>파일럿 구축</strong><span>2주 내 실제 동작하는 에이전트 데모</span></span></li>
+        <li><span class="num">03</span><span><strong>확장 운영</strong><span>전담 매니저와 함께 전사 확대</span></span></li>
+      </ul>
+      <div class="hero-actions" style="justify-content:flex-start;margin-top:24px;">
+        <a href="mailto:hello@allconnect.ai" class="btn btn-ghost" style="border-color:var(--color-dove);">✉ hello@allconnect.ai</a>
+      </div>
+    </div>
+
+    <form class="form reveal" id="contact-form" novalidate>
+      <div class="form-top">
+        <span class="heading-sm">도입 문의</span>
+        <span class="mono">STEP 1 / 2</span>
+      </div>
+      <div class="field">
+        <label for="name">성함 또는 회사명</label>
+        <input id="name" name="name" type="text" placeholder="홍길동 / AllConnect Inc." required>
+      </div>
+      <div class="field">
+        <label for="email">업무용 이메일</label>
+        <input id="email" name="email" type="email" placeholder="you@company.com" required>
+      </div>
+      <div class="field">
+        <label for="stack">연결하고 싶은 시스템</label>
+        <input id="stack" name="stack" type="text" placeholder="Slack, Salesforce, 사내 ERP …">
+      </div>
+      <div class="field">
+        <label for="message">해결하고 싶은 업무</label>
+        <textarea id="message" name="message" placeholder="예: 매주 반복되는 리드 정리와 보고를 자동화하고 싶습니다."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">문의 보내기</button>
+      <p class="form-status mono" id="form-status" role="status"></p>
+      <p class="form-note">보내주신 내용은 상담 목적으로만 사용됩니다.</p>
+    </form>
+  </div>
+</section>
+
+<!-- ── CTA ───────────────────────────────────── -->
+<section class="block" style="padding-top:0;">
+  <div class="container">
+    <div class="cta reveal">
+      <span class="orb orb-b" aria-hidden="true" style="left:-60px;right:auto;top:-80px;bottom:auto;"></span>
+      <div class="inner">
+        <h2 class="heading">오늘 연결하고,<br>내일 자동화하세요.</h2>
+        <p class="lead">가입 즉시 커넥터 3개와 월 10,000 호출을 무료로 사용할 수 있습니다.</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-primary">무료로 시작하기</a>
+          <a href="#pricing" class="btn btn-ghost">요금제 비교 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ── Footer ────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="brand">
+          <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="9" fill="#0a0a0a"/>
+            <circle cx="16" cy="16" r="3.4" fill="#fff"/>
+            <circle cx="7.5" cy="8.5" r="2.1" fill="#fff"/>
+            <circle cx="24.5" cy="8.5" r="2.1" fill="#fff"/>
+            <circle cx="7.5" cy="23.5" r="2.1" fill="#fff"/>
+            <circle cx="24.5" cy="23.5" r="2.1" fill="#fff"/>
+            <path d="M9 10.5 14 14.5M23 10.5 18 14.5M9 21.5 14 17.5M23 21.5 18 17.5" stroke="#fff" stroke-width="1.2" opacity=".55"/>
+          </svg>
+          <span>AllConnectAI</span>
+        </a>
+        <p>흩어진 시스템을 하나의 AI로 연결하는 커넥티드 AI 플랫폼.</p>
+      </div>
+      <div>
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#product">에이전트 빌더</a></li>
+          <li><a href="#product">커넥터</a></li>
+          <li><a href="#platform">플랫폼 API</a></li>
+          <li><a href="#pricing">요금제</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#work">도입 사례</a></li>
+          <li><a href="#testimonials">고객 후기</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#contact">문의하기</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="mailto:hello@allconnect.ai">hello@allconnect.ai</a></li>
+          <li><a href="#contact">도입 상담 신청</a></li>
+          <li><a href="#contact">파트너십 문의</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 AllConnectAI. All rights reserved.</p>
+      <p class="mono">Seoul · Made for connected teams</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Sticky header state
+  var nav = document.getElementById('nav');
+  var onScroll = function () {
+    nav.classList.toggle('scrolled', window.scrollY > 8);
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Reveal on scroll
+  var items = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px' });
+    items.forEach(function (el) { io.observe(el); });
+  } else {
+    items.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  // Code language tabs
+  var tabs = document.querySelectorAll('.tab');
+  var title = document.getElementById('term-title');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.setAttribute('aria-selected', String(t === tab)); });
+      ['python', 'typescript', 'curl'].forEach(function (lang) {
+        var block = document.getElementById('code-' + lang).parentElement;
+        block.hidden = (lang !== tab.dataset.lang);
+      });
+      title.textContent = tab.dataset.file;
+    });
+  });
+
+  // Contact form (front-end only)
+  var form = document.getElementById('contact-form');
+  var status = document.getElementById('form-status');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = form.elements['name'].value.trim();
+    var email = form.elements['email'].value.trim();
+    if (!name || !email || email.indexOf('@') === -1) {
+      status.textContent = '성함과 올바른 이메일을 입력해 주세요.';
+      return;
+    }
+    status.textContent = '접수되었습니다 — 24시간 이내에 회신드립니다.';
+    form.reset();
+  });
+})();
+</script>
+</body>
+</html>
