@@ -4,7 +4,7 @@
   'use strict';
 
   var STORAGE_KEY = 'familyPrayerBible30.v1';
-  var TOTAL_VERSES = 30; // verses.js에 포함된 기본 구절 개수(고정값, 데이터 검증용)
+  var MIN_VERSES_PER_THEME = 30; // 주제마다 기본으로 갖춰야 하는 구절 수
   var DEFAULT_NAMES = ['아빠', '엄마', '딸'];
   var SCRIPT_TAG_PATTERN = /<\s*script/i;
   var HTML_TAG_PATTERN = /<\/?[a-z][\s\S]*>/i;
@@ -12,64 +12,88 @@
   /* ---------------------------------------------------------
    * 0. 데이터 검증
    * --------------------------------------------------------- */
-  function validateVerses(verses) {
+  function validateThemes(themes) {
     var errors = [];
 
-    if (!Array.isArray(verses)) {
-      return { valid: false, errors: ['BIBLE_VERSES가 배열이 아닙니다.'] };
-    }
-    if (verses.length !== TOTAL_VERSES) {
-      errors.push('구절 개수가 ' + TOTAL_VERSES + '개가 아닙니다. (현재 ' + verses.length + '개)');
+    if (!Array.isArray(themes) || themes.length === 0) {
+      return { valid: false, errors: ['BIBLE_THEMES가 비어 있거나 배열이 아닙니다.'] };
     }
 
-    var seenIds = {};
-    var scriptTagPattern = SCRIPT_TAG_PATTERN;
-    var htmlTagPattern = HTML_TAG_PATTERN;
-
-    verses.forEach(function (v, idx) {
-      var where = 'verses[' + idx + ']';
-      if (!v || typeof v !== 'object') {
+    var seenKeys = {};
+    themes.forEach(function (theme, tIdx) {
+      var where = 'themes[' + tIdx + ']';
+      if (!theme || typeof theme !== 'object') {
         errors.push(where + ': 객체가 아닙니다.');
         return;
       }
-      if (typeof v.id !== 'number' || v.id < 1 || v.id > TOTAL_VERSES) {
-        errors.push(where + ': id 값이 올바르지 않습니다. (' + v.id + ')');
+      if (typeof theme.key !== 'string' || theme.key.trim().length === 0) {
+        errors.push(where + ': key 값이 비어 있습니다.');
+      } else if (seenKeys[theme.key]) {
+        errors.push('주제 key "' + theme.key + '"가 중복되었습니다.');
       } else {
-        if (seenIds[v.id]) {
-          errors.push('id ' + v.id + '가 중복되었습니다.');
-        }
-        seenIds[v.id] = true;
+        seenKeys[theme.key] = true;
       }
-
-      ['referenceKo', 'referenceEn', 'korean', 'english'].forEach(function (field) {
-        var val = v[field];
-        if (typeof val !== 'string' || val.trim().length === 0) {
-          errors.push('id ' + v.id + ': ' + field + ' 값이 비어 있습니다.');
-          return;
-        }
-        if (scriptTagPattern.test(val) || htmlTagPattern.test(val)) {
-          errors.push('id ' + v.id + ': ' + field + ' 값에 HTML/스크립트 태그로 의심되는 내용이 포함되어 있습니다.');
-        }
-      });
+      if (typeof theme.name !== 'string' || theme.name.trim().length === 0) {
+        errors.push(where + ': name 값이 비어 있습니다.');
+      }
+      errors = errors.concat(validateVerseList(theme.verses, theme.name || theme.key || where));
     });
 
-    for (var i = 1; i <= TOTAL_VERSES; i++) {
-      if (!seenIds[i]) {
-        errors.push('id ' + i + '에 해당하는 구절이 없습니다.');
-      }
-    }
-
     // 가족 순서가 3명 단위로 정확히 반복되는지 확인 (아빠→엄마→딸 반복 규칙 자체 점검)
-    for (var id = 1; id <= TOTAL_VERSES; id++) {
-      var expectedIndex = (id - 1) % 3;
-      var actualIndex = personIndexForVerseId(id);
-      if (expectedIndex !== actualIndex) {
+    for (var id = 1; id <= MIN_VERSES_PER_THEME; id++) {
+      if ((id - 1) % 3 !== personIndexForVerseId(id)) {
         errors.push('id ' + id + '의 가족 순서 계산이 3인 반복 규칙과 일치하지 않습니다.');
         break;
       }
     }
 
     return { valid: errors.length === 0, errors: errors };
+  }
+
+  // 한 주제의 구절 목록 검사: id가 1부터 빠짐없이 이어지고, 네 항목이 모두 채워져 있어야 한다.
+  function validateVerseList(verses, label) {
+    var errors = [];
+    if (!Array.isArray(verses)) {
+      return ['[' + label + '] verses가 배열이 아닙니다.'];
+    }
+    if (verses.length < MIN_VERSES_PER_THEME) {
+      errors.push('[' + label + '] 구절이 ' + MIN_VERSES_PER_THEME + '개보다 적습니다. (현재 ' + verses.length + '개)');
+    }
+
+    var seenIds = {};
+    verses.forEach(function (v, idx) {
+      var where = '[' + label + '] verses[' + idx + ']';
+      if (!v || typeof v !== 'object') {
+        errors.push(where + ': 객체가 아닙니다.');
+        return;
+      }
+      if (typeof v.id !== 'number' || v.id < 1 || v.id > verses.length) {
+        errors.push(where + ': id 값이 올바르지 않습니다. (' + v.id + ')');
+      } else if (seenIds[v.id]) {
+        errors.push('[' + label + '] id ' + v.id + '가 중복되었습니다.');
+      } else {
+        seenIds[v.id] = true;
+      }
+
+      ['referenceKo', 'referenceEn', 'korean', 'english'].forEach(function (field) {
+        var val = v[field];
+        if (typeof val !== 'string' || val.trim().length === 0) {
+          errors.push('[' + label + '] id ' + v.id + ': ' + field + ' 값이 비어 있습니다.');
+          return;
+        }
+        if (SCRIPT_TAG_PATTERN.test(val) || HTML_TAG_PATTERN.test(val)) {
+          errors.push('[' + label + '] id ' + v.id + ': ' + field + ' 값에 HTML/스크립트 태그로 의심되는 내용이 포함되어 있습니다.');
+        }
+      });
+    });
+
+    for (var i = 1; i <= verses.length; i++) {
+      if (!seenIds[i]) {
+        errors.push('[' + label + '] id ' + i + '에 해당하는 구절이 없습니다.');
+      }
+    }
+
+    return errors;
   }
 
   function personIndexForVerseId(verseId) {
@@ -82,37 +106,53 @@
   function defaultState() {
     return {
       names: DEFAULT_NAMES.slice(),
-      lastVerseId: 0,
-      completedIds: [],
       startMode: 'restart',
       speechRate: 1.0,
       fontSize: 'normal',
       lastUsedDate: null,
-      session: null,
-      customVerses: []
+      session: null, // { themeKey, verseIds, index }
+      themes: {}     // 주제 key -> { lastVerseId, completedIds, customVerses }
     };
   }
 
   function loadState() {
     var base = defaultState();
+    var parsed = null;
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return base;
-      var parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object') {
-        Object.keys(base).forEach(function (key) {
-          if (parsed[key] !== undefined) base[key] = parsed[key];
-        });
-      }
+      if (raw) parsed = JSON.parse(raw);
     } catch (e) {
       console.error('저장된 데이터를 불러오는 중 오류가 발생했습니다.', e);
     }
+
+    if (parsed && typeof parsed === 'object') {
+      Object.keys(base).forEach(function (key) {
+        if (parsed[key] !== undefined) base[key] = parsed[key];
+      });
+
+      // 주제 구분이 없던 예전 버전의 기록은 첫 번째 주제(기도)의 기록으로 옮긴다.
+      if (!parsed.themes && firstThemeKey()) {
+        base.themes = {};
+        base.themes[firstThemeKey()] = {
+          lastVerseId: typeof parsed.lastVerseId === 'number' ? parsed.lastVerseId : 0,
+          completedIds: Array.isArray(parsed.completedIds) ? parsed.completedIds : [],
+          customVerses: Array.isArray(parsed.customVerses) ? parsed.customVerses : []
+        };
+      }
+    }
+
     if (!Array.isArray(base.names) || base.names.length !== 3) {
       base.names = DEFAULT_NAMES.slice();
     }
-    if (!Array.isArray(base.completedIds)) base.completedIds = [];
-    if (!Array.isArray(base.customVerses)) base.customVerses = [];
+    if (!base.themes || typeof base.themes !== 'object') base.themes = {};
+    // 주제를 구분하지 않던 시절의 세션은 이어받지 않는다.
+    if (base.session && typeof base.session.themeKey !== 'string') base.session = null;
     return base;
+  }
+
+  function firstThemeKey() {
+    var themes = window.BIBLE_THEMES;
+    return (Array.isArray(themes) && themes.length > 0 && themes[0]) ? themes[0].key : null;
   }
 
   var state = loadState();
@@ -397,52 +437,106 @@
   /* ---------------------------------------------------------
    * 5. 화면 흐름 상태
    * --------------------------------------------------------- */
-  var versesById = {};
+  var THEMES = [];        // verses.js의 주제 목록 (기도 / 믿음 ...)
+  var versesIndex = {};   // 주제 key -> { 구절번호: 구절 }
 
-  // 기본 30구절(verses.js) + 사용자가 '말씀추가'로 직접 입력한 구절을 합친 전체 목록.
-  // 사용자 추가 구절은 id가 기본 구절 이후 번호(31, 32, ...)로 이어진다.
-  function getAllVerses() {
-    return window.BIBLE_VERSES.concat(state.customVerses);
+  function themeByKey(key) {
+    for (var i = 0; i < THEMES.length; i++) {
+      if (THEMES[i].key === key) return THEMES[i];
+    }
+    return null;
   }
 
-  function totalVerseCount() {
-    return getAllVerses().length;
+  function themeName(key) {
+    var theme = themeByKey(key);
+    return theme ? theme.name : '';
   }
 
-  function nextCustomVerseId() {
+  // 주제별 진행 기록. 없으면 만들어 준다.
+  function themeState(key) {
+    var t = state.themes[key];
+    if (!t || typeof t !== 'object') {
+      t = { lastVerseId: 0, completedIds: [], customVerses: [] };
+      state.themes[key] = t;
+    }
+    if (typeof t.lastVerseId !== 'number') t.lastVerseId = 0;
+    if (!Array.isArray(t.completedIds)) t.completedIds = [];
+    if (!Array.isArray(t.customVerses)) t.customVerses = [];
+    return t;
+  }
+
+  // 주제의 기본 구절 + 그 주제에 '말씀추가'로 직접 넣은 구절을 합친 전체 목록.
+  // 추가 구절의 번호는 기본 구절 다음 번호(31, 32, ...)로 이어진다.
+  function versesForTheme(key) {
+    var theme = themeByKey(key);
+    if (!theme) return [];
+    return theme.verses.concat(themeState(key).customVerses);
+  }
+
+  function totalVerseCount(key) {
+    return versesForTheme(key).length;
+  }
+
+  function verseOf(key, verseId) {
+    var map = versesIndex[key];
+    return map ? map[verseId] : null;
+  }
+
+  function nextCustomVerseId(key) {
     var maxId = 0;
-    getAllVerses().forEach(function (v) {
+    versesForTheme(key).forEach(function (v) {
       if (v.id > maxId) maxId = v.id;
     });
     return maxId + 1;
   }
 
   function indexVerses() {
-    versesById = {};
-    getAllVerses().forEach(function (v) { versesById[v.id] = v; });
+    versesIndex = {};
+    THEMES.forEach(function (theme) {
+      var map = {};
+      versesForTheme(theme.key).forEach(function (v) { map[v.id] = v; });
+      versesIndex[theme.key] = map;
+    });
   }
 
-  function totalCompletedCount() {
+  function completedCount(key) {
     var unique = {};
-    state.completedIds.forEach(function (id) { unique[id] = true; });
+    themeState(key).completedIds.forEach(function (id) { unique[id] = true; });
     return Object.keys(unique).length;
   }
 
-  function markCompleted(verseId) {
-    if (state.completedIds.indexOf(verseId) === -1) {
-      state.completedIds.push(verseId);
+  function markCompleted(key, verseId) {
+    var t = themeState(key);
+    if (t.completedIds.indexOf(verseId) === -1) {
+      t.completedIds.push(verseId);
     }
-    if (verseId > state.lastVerseId) state.lastVerseId = verseId;
+    if (verseId > t.lastVerseId) t.lastVerseId = verseId;
   }
 
-  // '기도' 버튼은 항상 시작 구절부터 마지막 구절까지 전부 이어서 읽는다(분량 선택 없음).
-  function buildSessionVerseIds(startId) {
+  // 주제 버튼을 누르면 시작 구절부터 그 주제의 마지막 구절까지 전부 이어서 읽는다.
+  function buildSessionVerseIds(key, startId) {
     var ids = [];
-    var total = totalVerseCount();
+    var total = totalVerseCount(key);
     for (var i = startId; i <= total; i++) {
       ids.push(i);
     }
     return ids;
+  }
+
+  function startIdFor(key) {
+    var t = themeState(key);
+    var total = totalVerseCount(key);
+    var hasProgress = t.lastVerseId > 0 && t.lastVerseId < total;
+    if (hasProgress && state.startMode === 'resume') return t.lastVerseId + 1;
+    return 1;
+  }
+
+  function startSession(key, startId) {
+    var ids = buildSessionVerseIds(key, startId);
+    if (ids.length === 0) ids = buildSessionVerseIds(key, 1);
+    state.session = { themeKey: key, verseIds: ids, index: 0 };
+    saveState();
+    enterReading();
   }
 
   /* ---------------------------------------------------------
@@ -472,19 +566,31 @@
     setRadioGroupValue(fontsizeGroup, size);
   }
 
-  function renderHome() {
-    var total = totalVerseCount();
-    var hasProgress = state.lastVerseId > 0 && state.lastVerseId < total;
-    setRadioGroupValue(startPointGroup, hasProgress ? state.startMode || 'resume' : 'restart');
-    if (!hasProgress) {
-      // 저장된 기록이 없으면 '1번부터 시작'이 기본값
-      state.startMode = 'restart';
-      setRadioGroupValue(startPointGroup, 'restart');
-    }
-    resumeHint.textContent = hasProgress
-      ? (state.lastVerseId + '번까지 읽으셨어요. 이어서 읽으면 ' + (state.lastVerseId + 1) + '번부터 시작합니다. (전체 ' + total + '구절)')
-      : '아직 저장된 기록이 없어 1번부터 시작합니다. (전체 ' + total + '구절)';
+  function anyThemeHasProgress() {
+    return THEMES.some(function (theme) {
+      var t = themeState(theme.key);
+      return t.lastVerseId > 0 && t.lastVerseId < totalVerseCount(theme.key);
+    });
+  }
 
+  function renderHome() {
+    var hasProgress = anyThemeHasProgress();
+    if (!hasProgress) {
+      // 읽던 기록이 없으면 '1번부터 시작'이 기본값
+      state.startMode = 'restart';
+    }
+    setRadioGroupValue(startPointGroup, state.startMode || 'restart');
+
+    // 주제별 진행 상황을 한 줄로 안내한다. (예: 기도 3번까지 읽음 · 믿음 아직 시작 전)
+    resumeHint.textContent = THEMES.map(function (theme) {
+      var t = themeState(theme.key);
+      var total = totalVerseCount(theme.key);
+      if (t.lastVerseId <= 0) return theme.name + ' 아직 시작 전 (전체 ' + total + '구절)';
+      if (t.lastVerseId >= total) return theme.name + ' 전체 ' + total + '구절 완료';
+      return theme.name + ' ' + t.lastVerseId + '번까지 읽음 (다음 ' + (t.lastVerseId + 1) + '번 / 전체 ' + total + '구절)';
+    }).join(' · ');
+
+    renderThemeButtons();
     applyFontSize(state.fontSize);
 
     nameInputs.forEach(function (input, i) {
@@ -492,6 +598,38 @@
     });
 
     renderCopyrightFooter();
+  }
+
+  // 홈 화면의 주제 버튼(기도 / 믿음 ...)을 verses.js의 주제 목록대로 만든다.
+  function renderThemeButtons() {
+    var wrap = $('theme-buttons');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    THEMES.forEach(function (theme) {
+      var t = themeState(theme.key);
+      var total = totalVerseCount(theme.key);
+      var startId = startIdFor(theme.key);
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-primary btn-large theme-btn';
+      btn.setAttribute('data-theme-key', theme.key);
+      btn.setAttribute('aria-label', theme.name + ' 말씀 읽기 시작');
+
+      var nameEl = document.createElement('span');
+      nameEl.className = 'theme-btn-name';
+      nameEl.textContent = theme.name;
+
+      var subEl = document.createElement('span');
+      subEl.className = 'theme-btn-sub';
+      subEl.textContent = t.lastVerseId >= total
+        ? ('전체 ' + total + '구절 완료 · ' + startId + '번부터')
+        : (startId + '번부터 · 전체 ' + total + '구절');
+
+      btn.appendChild(nameEl);
+      btn.appendChild(subEl);
+      wrap.appendChild(btn);
+    });
   }
 
   function renderCopyrightFooter() {
@@ -525,6 +663,7 @@
     if (!btn) return;
     state.startMode = btn.getAttribute('data-value');
     setRadioGroupValue(startPointGroup, state.startMode);
+    renderThemeButtons(); // 주제 버튼에 표시되는 '몇 번부터' 안내를 갱신
     saveState();
   });
 
@@ -561,41 +700,33 @@
   });
   $('confirm-ok').addEventListener('click', function () {
     confirmDialog.hidden = true;
-    var names = state.names;
-    var fontSize = state.fontSize;
-    var speechRate = state.speechRate;
-    var customVerses = state.customVerses;
-    state = defaultState();
-    state.names = names;
-    state.fontSize = fontSize;
-    state.speechRate = speechRate;
-    state.customVerses = customVerses;
+    // 읽기 기록만 지우고 가족 이름·글자 크기·직접 추가한 말씀은 그대로 둔다.
+    Object.keys(state.themes).forEach(function (key) {
+      var t = themeState(key);
+      t.lastVerseId = 0;
+      t.completedIds = [];
+    });
+    state.session = null;
+    state.startMode = 'restart';
     saveState();
     renderHome();
     announce('읽기 기록이 초기화되었습니다.');
   });
 
-  $('btn-pray').addEventListener('click', withLock(function () {
-    var total = totalVerseCount();
-    var hasProgress = state.lastVerseId > 0 && state.lastVerseId < total;
-    var startId = 1;
-    if (hasProgress && state.startMode === 'resume') {
-      startId = state.lastVerseId + 1;
-    }
-    if (startId > total) startId = 1;
-
-    var ids = buildSessionVerseIds(startId);
-    if (ids.length === 0) ids = buildSessionVerseIds(1);
-
-    state.session = { verseIds: ids, index: 0 };
-    saveState();
-    enterReading();
+  // 주제 버튼(기도 / 믿음 ...)은 app.js가 동적으로 만들기 때문에 상위 요소에서 클릭을 받는다.
+  $('theme-buttons').addEventListener('click', withLock(function (e) {
+    var btn = e.target.closest('.theme-btn');
+    if (!btn) return;
+    var key = btn.getAttribute('data-theme-key');
+    if (!themeByKey(key)) return;
+    startSession(key, startIdFor(key));
   }));
 
   $('btn-add-verse').addEventListener('click', withLock(function () {
     showScreen('addVerse');
-    $('add-verse-error').hidden = true;
-    $('add-verse-success').hidden = true;
+    addVerseError.hidden = true;
+    addVerseSuccess.hidden = true;
+    renderAddThemeOptions();
   }));
 
   /* ---------------------------------------------------------
@@ -620,6 +751,30 @@
     $('add-english').value = '';
   }
 
+  // '어느 목록에 추가할까요?' 선택 버튼을 주제 목록대로 만든다.
+  var addThemeGroup = $('add-theme-group');
+
+  function renderAddThemeOptions() {
+    var selected = getRadioGroupValue(addThemeGroup) || (THEMES[0] && THEMES[0].key);
+    addThemeGroup.innerHTML = '';
+    THEMES.forEach(function (theme) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'option-btn';
+      btn.setAttribute('role', 'radio');
+      btn.setAttribute('data-value', theme.key);
+      btn.setAttribute('aria-checked', theme.key === selected ? 'true' : 'false');
+      btn.textContent = theme.name;
+      addThemeGroup.appendChild(btn);
+    });
+  }
+
+  addThemeGroup.addEventListener('click', function (e) {
+    var btn = e.target.closest('.option-btn');
+    if (!btn) return;
+    setRadioGroupValue(addThemeGroup, btn.getAttribute('data-value'));
+  });
+
   $('btn-add-verse-cancel').addEventListener('click', withLock(function () {
     addVerseError.hidden = true;
     addVerseSuccess.hidden = true;
@@ -628,6 +783,11 @@
   }));
 
   var handleAddVerseSubmit = withLock(function () {
+    var themeKey = getRadioGroupValue(addThemeGroup);
+    if (!themeByKey(themeKey)) {
+      showAddVerseError('어느 목록에 추가할지 먼저 선택해 주세요.');
+      return;
+    }
     var bookKo = $('add-book-ko').value.trim();
     var chapter = $('add-chapter').value.trim();
     var verseNum = $('add-verse-num').value.trim();
@@ -652,10 +812,10 @@
       }
     }
 
-    var newId = nextCustomVerseId();
+    var newId = nextCustomVerseId(themeKey);
     var referenceKo = bookKo + ' ' + chapter + '장 ' + verseNum + '절';
 
-    state.customVerses.push({
+    themeState(themeKey).customVerses.push({
       id: newId,
       referenceKo: referenceKo,
       referenceEn: referenceEn,
@@ -667,9 +827,9 @@
 
     clearAddVerseForm();
     addVerseError.hidden = true;
-    addVerseSuccess.textContent = newId + '번 말씀으로 추가되었습니다. (' + referenceKo + ')';
+    addVerseSuccess.textContent = themeName(themeKey) + ' 목록에 ' + newId + '번 말씀으로 추가되었습니다. (' + referenceKo + ')';
     addVerseSuccess.hidden = false;
-    announce(referenceKo + '가 ' + newId + '번 말씀으로 추가되었습니다.');
+    announce(referenceKo + '가 ' + themeName(themeKey) + ' 목록의 ' + newId + '번 말씀으로 추가되었습니다.');
   });
 
   addVerseForm.addEventListener('submit', function (e) {
@@ -712,16 +872,22 @@
     return state.session.verseIds[state.session.index];
   }
 
+  function currentThemeKey() {
+    return state.session ? state.session.themeKey : null;
+  }
+
   function renderVerse() {
     if (!state.session) return;
+    var themeKey = currentThemeKey();
     var verseId = currentSessionVerseId();
-    var verse = versesById[verseId];
+    var verse = verseOf(themeKey, verseId);
     if (!verse) return;
 
     var todayTotal = state.session.verseIds.length;
     var todayCurrent = state.session.index + 1;
-    var total = totalVerseCount();
-    elProgressText.textContent = '이번에 ' + todayCurrent + '/' + todayTotal + ' · 전체 ' + verseId + '/' + total;
+    var total = totalVerseCount(themeKey);
+    elProgressText.textContent = themeName(themeKey) + ' · 이번에 ' + todayCurrent + '/' + todayTotal +
+      ' · 전체 ' + verseId + '/' + total;
     var pct = Math.round((todayCurrent / todayTotal) * 100);
     elProgressFill.style.width = pct + '%';
     elProgressTrack.setAttribute('aria-valuenow', String(pct));
@@ -804,7 +970,7 @@
         updateSpeechStatus('영어 음성 재생이 끝났습니다.');
         announce('영어 음성 재생이 끝났습니다.');
         var vId = currentSessionVerseId();
-        if (vId) markCompleted(vId);
+        if (vId) markCompleted(currentThemeKey(), vId);
         saveState();
         break;
       case 'error':
@@ -850,8 +1016,7 @@
   btnNext.addEventListener('click', withLock(function () {
     if (!state.session) return;
     Speech.cancel();
-    var verseId = currentSessionVerseId();
-    markCompleted(verseId);
+    markCompleted(currentThemeKey(), currentSessionVerseId());
 
     if (state.session.index + 1 < state.session.verseIds.length) {
       state.session.index += 1;
@@ -890,6 +1055,7 @@
 
   function finishSession() {
     var summary = {
+      themeKey: state.session.themeKey,
       verseIds: state.session.verseIds.slice(),
       todayCount: state.session.verseIds.length
     };
@@ -902,37 +1068,42 @@
   }
 
   function renderComplete(summary) {
-    var total = totalVerseCount();
-    var totalDone = totalCompletedCount();
-    var nextStart = state.lastVerseId >= total ? 1 : state.lastVerseId + 1;
+    var key = summary.themeKey;
+    var total = totalVerseCount(key);
+    var totalDone = completedCount(key);
+    var lastVerseId = themeState(key).lastVerseId;
+    var nextStart = lastVerseId >= total ? 1 : lastVerseId + 1;
 
+    $('complete-title').textContent = themeName(key) + ' 말씀 읽기를 마쳤습니다';
     $('stat-today').textContent = '오늘 읽은 구절: ' + summary.todayCount + '개';
-    $('stat-total').textContent = '전체 완료 구절: ' + totalDone + '/' + total + '개';
+    $('stat-total').textContent = themeName(key) + ' 완료 구절: ' + totalDone + '/' + total + '개';
     $('stat-next').textContent = '다음에 시작할 구절: ' + nextStart + '번';
 
     var allDone = totalDone >= total;
     var celebrateEl = $('complete-celebrate');
-    celebrateEl.textContent = '기도의 말씀 ' + total + '구절을 모두 읽었습니다';
+    celebrateEl.textContent = themeName(key) + '의 말씀 ' + total + '구절을 모두 읽었습니다';
     celebrateEl.hidden = !allDone;
     announce(allDone ? celebrateEl.textContent : '오늘의 말씀 읽기를 마쳤습니다');
   }
 
   $('btn-review-today').addEventListener('click', withLock(function () {
     if (!lastSessionSummary) return;
-    state.session = { verseIds: lastSessionSummary.verseIds.slice(), index: 0 };
+    state.session = {
+      themeKey: lastSessionSummary.themeKey,
+      verseIds: lastSessionSummary.verseIds.slice(),
+      index: 0
+    };
     saveState();
     showScreen('reading');
     renderVerse();
   }));
 
   $('btn-continue').addEventListener('click', withLock(function () {
-    var total = totalVerseCount();
-    var nextStart = state.lastVerseId >= total ? 1 : state.lastVerseId + 1;
-    var ids = buildSessionVerseIds(nextStart);
-    if (ids.length === 0) ids = buildSessionVerseIds(1);
-    state.session = { verseIds: ids, index: 0 };
-    saveState();
-    enterReading();
+    if (!lastSessionSummary) return;
+    var key = lastSessionSummary.themeKey;
+    var total = totalVerseCount(key);
+    var lastVerseId = themeState(key).lastVerseId;
+    startSession(key, lastVerseId >= total ? 1 : lastVerseId + 1);
   }));
 
   $('btn-complete-home').addEventListener('click', withLock(function () {
@@ -970,8 +1141,7 @@
    * 10. 초기화
    * --------------------------------------------------------- */
   function init() {
-    var verses = window.BIBLE_VERSES;
-    var result = validateVerses(verses);
+    var result = validateThemes(window.BIBLE_THEMES);
     if (!result.valid) {
       console.error('성경 데이터 검증 실패:');
       result.errors.forEach(function (err) { console.error(' - ' + err); });
@@ -979,14 +1149,22 @@
       showScreen('error');
       return;
     }
+    THEMES = window.BIBLE_THEMES;
+    THEMES.forEach(function (theme) { themeState(theme.key); });
     indexVerses();
+    renderAddThemeOptions();
     appRoot.hidden = false;
 
-    if (state.session && state.session.verseIds && state.session.verseIds.length > 0) {
+    var session = state.session;
+    var sessionUsable = session && themeByKey(session.themeKey) &&
+      Array.isArray(session.verseIds) && session.verseIds.length > 0;
+
+    if (sessionUsable) {
       showScreen('reading');
       renderVerse();
       requestWakeLock();
     } else {
+      state.session = null;
       showScreen('home');
       renderHome();
     }
@@ -1002,9 +1180,12 @@
     // 새 버전의 서비스워커가 설치되어 제어권을 넘겨받으면, 화면을 한 번 새로고침해
     // 이미 열려 있던 탭도 최신 파일(app.js/styles.css/verses.js 등)을 바로 쓰게 한다.
     // (이 처리가 없으면 예전에 방문한 기기에서 배포 후에도 계속 옛 화면이 보일 수 있다.)
+    // 단, 첫 방문(아직 서비스워커의 제어를 받지 않던 상태)에서 처음 제어권을 잡는 경우는
+    // 새 버전으로의 교체가 아니므로 새로고침하지 않는다. (불필요한 새로고침 방지)
+    var hadController = !!navigator.serviceWorker.controller;
     var swRefreshed = false;
     navigator.serviceWorker.addEventListener('controllerchange', function () {
-      if (swRefreshed) return;
+      if (!hadController || swRefreshed) return;
       swRefreshed = true;
       window.location.reload();
     });
