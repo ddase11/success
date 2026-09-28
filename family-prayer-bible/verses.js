@@ -4,22 +4,23 @@
  *  - 기도(prayer): 기도에 관한 30구절
  *  - 믿음(faith) : 믿음에 관한 30구절
  *
- * 본문 출처:
- *  - 한글: 개역개정 (대한성서공회)
- *  - 영어: NIV, New International Version (Biblica, Inc.)
+ * 각 구절의 구성:
+ *  - korean       : 개역개정 (대한성서공회)
+ *  - koreanModern : 현대 한국어 번역 (Open Korean Bible, CC BY 4.0) — 선택 항목.
+ *                   원문이 현대어로 번역되지 않은 구절에는 이 항목이 없으며,
+ *                   그런 구절은 화면에서 현대어 줄이 표시되지 않습니다.
+ *  - english      : NIV, New International Version (Biblica, Inc.)
  *
- * 각 본문은 실제 성경 사이트에 게재된 문구 또는 사용자가 제공한 대조표를 그대로
- * 옮긴 것이며, 임의로 작성하거나 기억에 의존해 재구성하지 않았습니다.
+ * 본문 출처와 사용 조건은 README.md의 "저작권 확인 사항"을 참고하세요.
  *
  * ⚠ 공개 배포 전 필독: 한글 개역개정 본문의 사용 조건과 허가 여부를
  * 대한성서공회(bskorea.or.kr)를 통해 반드시 확인해야 합니다.
- * 자세한 내용은 README.md의 "저작권 확인 사항"을 참고하세요.
  *
  * 주제를 추가하려면 window.BIBLE_THEMES 배열에 아래 구조로 항목을 추가하세요.
  * {
  *   key: "영문키",           // 저장소 구분용. 한 번 정하면 바꾸지 마세요.
  *   name: "화면에 보일 이름",
- *   verses: [ { id, referenceKo, referenceEn, korean, english }, ... ]
+ *   verses: [ { id, referenceKo, referenceEn, korean, koreanModern?, english }, ... ]
  * }
  * verses의 id는 1부터 빠짐없이 1씩 증가해야 합니다.
  */
@@ -34,6 +35,7 @@ window.BIBLE_THEMES = [
         referenceKo: "빌립보서 4장 6절",
         referenceEn: "Philippians 4:6",
         korean: "아무 것도 염려하지 말고 다만 모든 일에 기도와 간구로, 너희 구할 것을 감사함으로 하나님께 아뢰라",
+        koreanModern: "아무것도 염려하지 말고, 모든 일에 기도와 간구로 여러분이 원하는 것을 감사하는 마음으로 하나님께 아뢰십시오.",
         english: "Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God."
       },
       {
@@ -48,6 +50,7 @@ window.BIBLE_THEMES = [
         referenceKo: "마태복음 7장 7절",
         referenceEn: "Matthew 7:7",
         korean: "구하라 그리하면 너희에게 주실 것이요 찾으라 그리하면 찾아낼 것이요 문을 두드리라 그리하면 너희에게 열릴 것이니",
+        koreanModern: "구하십시오. 그러면 너희에게 주실 것입니다. 찾으십시오. 그러면 찾을 것입니다. 문을 두드리십시오. 그러면 너희에게 열릴 것입니다.",
         english: "Ask and it will be given to you; seek and you will find; knock and the door will be opened to you."
       },
       {
@@ -55,6 +58,7 @@ window.BIBLE_THEMES = [
         referenceKo: "데살로니가전서 5장 17절",
         referenceEn: "1 Thessalonians 5:17",
         korean: "쉬지 말고 기도하라",
+        koreanModern: "쉬지 말고 기도하십시오.",
         english: "pray continually,"
       },
       {
@@ -62,6 +66,7 @@ window.BIBLE_THEMES = [
         referenceKo: "마가복음 11장 24절",
         referenceEn: "Mark 11:24",
         korean: "그러므로 내가 너희에게 말하노니 무엇이든지 기도하고 구하는 것은 받은 줄로 믿으라 그리하면 너희에게 그대로 되리라",
+        koreanModern: "그러므로 내가 너희에게 말한다. 무엇이든지 기도하며 구하는 것은 이미 받은 줄로 믿어라. 그러면 그대로 이루어질 것이다.",
         english: "Therefore I tell you, whatever you ask for in prayer, believe that you have received it, and it will be yours."
       },
       {
@@ -69,6 +74,7 @@ window.BIBLE_THEMES = [
         referenceKo: "빌립보서 4장 7절",
         referenceEn: "Philippians 4:7",
         korean: "그리하면 모든 지각에 뛰어난 하나님의 평강이 그리스도 예수 안에서 너희 마음과 생각을 지키시리라",
+        koreanModern: "그러면 사람의 이해를 뛰어넘는 하나님의 평화가 그리스도 예수 안에서 여러분의 마음과 생각을 지켜줄 것입니다.",
         english: "And the peace of God, which transcends all understanding, will guard your hearts and your minds in Christ Jesus."
       },
       {
@@ -76,6 +82,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한복음 15장 7절",
         referenceEn: "John 15:7",
         korean: "너희가 내 안에 거하고 내 말이 너희 안에 거하면 무엇이든지 원하는대로 구하라 그리하면 이루리라",
+        koreanModern: "너희가 내 안에 머물고 내 말이 너희 안에 머물면, 무엇이든지 원하는 대로 구하라. 그러면 이루어질 것이다.",
         english: "If you remain in me and my words remain in you, ask whatever you wish, and it will be done for you."
       },
       {
@@ -83,6 +90,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한일서 5장 14절",
         referenceEn: "1 John 5:14",
         korean: "그를 향하여 우리가 가진 바 담대함이 이것이니 그의 뜻대로 무엇을 구하면 들으심이라",
+        koreanModern: "우리가 그분을 향하여 가진 담대함은 이것입니다. 만일 우리가 그분의 뜻대로 무엇을 구하면 그분이 들으신다는 것입니다.",
         english: "This is the confidence we have in approaching God: that if we ask anything according to his will, he hears us."
       },
       {
@@ -90,6 +98,7 @@ window.BIBLE_THEMES = [
         referenceKo: "로마서 8장 26절",
         referenceEn: "Romans 8:26",
         korean: "이와 같이 성령도 우리의 연약함을 도우시나니 우리는 마땅히 기도할 바를 알지 못하나 오직 성령이 말할 수 없는 탄식으로 우리를 위하여 친히 간구하시느니라",
+        koreanModern: "이와 같이 성령께서도 연약한 우리를 도우십니다. 우리는 마땅히 기도할 바를 알지 못하지만, 성령께서 친히 말로 표현할 수 없는 탄식으로 우리를 위해 간구하십니다.",
         english: "In the same way, the Spirit helps us in our weakness. We do not know what we ought to pray for, but the Spirit himself intercedes for us through wordless groans."
       },
       {
@@ -97,6 +106,7 @@ window.BIBLE_THEMES = [
         referenceKo: "히브리서 4장 16절",
         referenceEn: "Hebrews 4:16",
         korean: "그러므로 우리는 긍휼하심을 받고 때를 따라 돕는 은혜를 얻기 위하여 은혜의 보좌 앞에 담대히 나아갈 것이니라",
+        koreanModern: "그러므로 우리가 긍휼하심을 받고 때를 따라 돕는 은혜를 얻기 위하여 은혜의 보좌 앞에 담대히 나아갑시다.",
         english: "Let us then approach God's throne of grace with confidence, so that we may receive mercy and find grace to help us in our time of need."
       },
       {
@@ -111,6 +121,7 @@ window.BIBLE_THEMES = [
         referenceKo: "누가복음 18장 1절",
         referenceEn: "Luke 18:1",
         korean: "예수께서 그들에게 항상 기도하고 낙심하지 말아야 할 것을 비유로 말씀하여",
+        koreanModern: "항상 기도하고 낙심하지 말아야 할 것을 그들에게 비유로 말씀하셨습니다.",
         english: "Then Jesus told his disciples a parable to show them that they should always pray and not give up."
       },
       {
@@ -118,6 +129,7 @@ window.BIBLE_THEMES = [
         referenceKo: "에베소서 6장 18절",
         referenceEn: "Ephesians 6:18",
         korean: "모든 기도와 간구를 하되 항상 성령 안에서 기도하고 이를 위하여 깨어 구하기를 항상 힘쓰며 여러 성도를 위하여 구하라",
+        koreanModern: "모든 기도와 간구로 항상 성령 안에서 기도하십시오. 이를 위해 깨어 있어 모든 성도를 위해 끈질기게 기도하십시오.",
         english: "And pray in the Spirit on all occasions with all kinds of prayers and requests. With this in mind, be alert and always keep on praying for all the Lord's people."
       },
       {
@@ -125,6 +137,7 @@ window.BIBLE_THEMES = [
         referenceKo: "야고보서 1장 5절",
         referenceEn: "James 1:5",
         korean: "너희 중에 누구든지 지혜가 부족하거든 모든 사람에게 후히 주시고 꾸짖지 아니하시는 하나님께 구하라 그리하면 주시리라",
+        koreanModern: "여러분 중에 누구든지 지혜가 부족하면 모든 사람에게 후히 주시고 꾸짖지 않으시는 하나님께 구하십시오. 그리하면 주실 것입니다.",
         english: "If any of you lacks wisdom, you should ask God, who gives generously to all without finding fault, and it will be given to you."
       },
       {
@@ -153,6 +166,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한복음 14장 13절",
         referenceEn: "John 14:13",
         korean: "너희가 내 이름으로 무엇을 구하든지 내가 행하리니 이는 아버지로 하여금 아들로 말미암아 영광을 받으시게 하려 함이라",
+        koreanModern: "너희가 내 이름으로 무엇을 구하든지, 내가 이루어 주겠다. 이것은 아버지께서 아들을 통해 영광을 받으시게 하려는 것이다.",
         english: "And I will do whatever you ask in my name, so that the Father may be glorified in the Son."
       },
       {
@@ -160,6 +174,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한복음 16장 24절",
         referenceEn: "John 16:24",
         korean: "지금까지는 너희가 내 이름으로 아무 것도 구하지 아니하였으나 구하라 그리하면 받으리니 너희 기쁨이 충만하리라",
+        koreanModern: "지금까지 너희는 내 이름으로 아무것도 구하지 않았다. 구하라. 그러면 받을 것이다. 그래서 너희 기쁨이 넘칠 것이다.",
         english: "Until now you have not asked for anything in my name. Ask and you will receive, and your joy will be complete."
       },
       {
@@ -167,6 +182,7 @@ window.BIBLE_THEMES = [
         referenceKo: "야고보서 5장 15절",
         referenceEn: "James 5:15",
         korean: "믿음의 기도는 병든 자를 구원하리니 주께서 그를 일으키시리라 혹시 죄를 범하였을지라도 사하심을 받으리라",
+        koreanModern: "믿음의 기도는 병든 사람을 구원할 것이니 주께서 그를 일으키실 것입니다. 혹시 죄를 범하였을지라도 사하심을 얻을 것입니다.",
         english: "And the prayer offered in faith will make the sick person well; the Lord will raise them up. If they have sinned, they will be forgiven."
       },
       {
@@ -174,6 +190,7 @@ window.BIBLE_THEMES = [
         referenceKo: "마태복음 7장 11절",
         referenceEn: "Matthew 7:11",
         korean: "너희가 악한 자라도 좋은 것으로 자식에게 줄 줄 알거든 하물며 하늘에 계신 너희 아버지께서 구하는 자에게 좋은 것으로 주시지 않겠느냐",
+        koreanModern: "너희가 악한 사람일지라도 자녀에게 좋은 것을 줄 줄 안다면, 하늘에 계신 너희 아버지께서는 구하는 사람들에게 좋은 것으로 얼마나 더 잘 주시겠습니까?",
         english: "If you, then, though you are evil, know how to give good gifts to your children, how much more will your Father in heaven give good gifts to those who ask him!"
       },
       {
@@ -181,6 +198,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한일서 5장 15절",
         referenceEn: "1 John 5:15",
         korean: "우리가 무엇이든지 구하는 바를 들으시는 줄을 안즉 우리가 그에게 구한 그것을 얻은 줄을 또한 아느니라",
+        koreanModern: "우리가 무엇을 구하든지 그분이 들으시는 줄을 안다면, 우리가 그분께 구한 것을 얻은 줄도 압니다.",
         english: "And if we know that he hears us—whatever we ask—we know that we have what we asked of him."
       },
       {
@@ -195,6 +213,7 @@ window.BIBLE_THEMES = [
         referenceKo: "로마서 8장 27절",
         referenceEn: "Romans 8:27",
         korean: "마음을 살피시는 이가 성령의 생각을 아시나니 이는 성령이 하나님의 뜻대로 성도를 위하여 간구하심이니라",
+        koreanModern: "마음을 살피시는 분께서는 성령의 생각이 무엇인지 아십니다. 성령께서 하나님의 뜻대로 성도를 위해 간구하시기 때문입니다.",
         english: "And he who searches our hearts knows the mind of the Spirit, because the Spirit intercedes for God's people in accordance with the will of God."
       },
       {
@@ -202,6 +221,7 @@ window.BIBLE_THEMES = [
         referenceKo: "히브리서 11장 6절",
         referenceEn: "Hebrews 11:6",
         korean: "믿음이 없이는 하나님을 기쁘시게 하지 못하나니 하나님께 나아가는 자는 반드시 그가 계신 것과 또한 그가 자기를 찾는 자들에게 상 주시는 이심을 믿어야 할지니라",
+        koreanModern: "믿음이 없이는 하나님을 기쁘시게 하지 못합니다. 하나님께 나아가는 자는 반드시 그분께서 계신 것과 그분께서 자기를 찾는 자들에게 상 주시는 분이심을 믿어야 합니다.",
         english: "And without faith it is impossible to please God, because anyone who comes to him must believe that he exists and that he rewards those who earnestly seek him."
       },
       {
@@ -223,6 +243,7 @@ window.BIBLE_THEMES = [
         referenceKo: "누가복음 11장 13절",
         referenceEn: "Luke 11:13",
         korean: "너희가 악할지라도 좋은 것을 자식에게 줄 줄 알거든 하물며 너희 하늘 아버지께서 구하는 자에게 성령을 주시지 않겠느냐 하시니라",
+        koreanModern: "너희가 악할지라도 좋은 것을 자녀에게 줄 줄 알거든, 하늘 아버지께서 구하는 사람들에게 성령을 주시지 않겠느냐?\"",
         english: "If you then, though you are evil, know how to give good gifts to your children, how much more will your Father in heaven give the Holy Spirit to those who ask him!"
       },
       {
@@ -237,6 +258,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한복음 15장 16절",
         referenceEn: "John 15:16",
         korean: "너희가 나를 택한 것이 아니요 내가 너희를 택하여 세웠나니 이는 너희로 가서 열매를 맺게 하고 또 너희 열매가 항상 있게 하여 내 이름으로 아버지께 무엇을 구하든지 다 받게 하려 함이라",
+        koreanModern: "너희가 나를 택한 것이 아니라 내가 너희를 택했다. 그리고 너희를 세웠다. 이는 너희가 가서 열매를 맺고, 그 열매가 계속 남아 있게 하려는 것이다. 그래서 너희가 내 이름으로 아버지께 무엇을 구하든지 다 받게 하려는 것이다.",
         english: "You did not choose me, but I chose you and appointed you so that you might go and bear fruit—fruit that will last—and so that whatever you ask in my name the Father will give you."
       }
     ]
@@ -250,6 +272,7 @@ window.BIBLE_THEMES = [
         referenceKo: "히브리서 11장 1절",
         referenceEn: "Hebrews 11:1",
         korean: "믿음은 바라는 것들의 실상이요 보이지 않는 것들의 증거니",
+        koreanModern: "믿음은 바라는 것들의 실상이요 보지 못하는 것들의 증거입니다.",
         english: "Now faith is confidence in what we hope for and assurance about what we do not see."
       },
       {
@@ -257,6 +280,7 @@ window.BIBLE_THEMES = [
         referenceKo: "히브리서 11장 6절",
         referenceEn: "Hebrews 11:6",
         korean: "믿음이 없이는 하나님을 기쁘시게 하지 못하나니 하나님께 나아가는 자는 반드시 그가 계신 것과 또한 그가 자기를 찾는 자들에게 상 주시는 이심을 믿어야 할지니라",
+        koreanModern: "믿음이 없이는 하나님을 기쁘시게 하지 못합니다. 하나님께 나아가는 자는 반드시 그분께서 계신 것과 그분께서 자기를 찾는 자들에게 상 주시는 분이심을 믿어야 합니다.",
         english: "And without faith it is impossible to please God, because anyone who comes to him must believe that he exists and that he rewards those who earnestly seek him."
       },
       {
@@ -264,6 +288,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한복음 3장 16절",
         referenceEn: "John 3:16",
         korean: "하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니 이는 그를 믿는 자마다 멸망하지 않고 영생을 얻게 하려 하심이라",
+        koreanModern: "하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니, 이는 그를 믿는 사람마다 멸망하지 않고 영생을 얻게 하려는 것입니다.",
         english: "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life."
       },
       {
@@ -271,6 +296,7 @@ window.BIBLE_THEMES = [
         referenceKo: "로마서 10장 9절",
         referenceEn: "Romans 10:9",
         korean: "네가 만일 네 입으로 예수를 주라 시인하며 또 하나님께서 그를 죽은 자 가운데서 살리신 것을 네 마음에 믿으면 구원을 받으리라",
+        koreanModern: "네가 입으로 예수를 주로 고백하고, 마음으로 하나님께서 그분을 죽은 자 가운데서 살리신 것을 믿으면 구원을 받을 것입니다.",
         english: "If you declare with your mouth, \"Jesus is Lord,\" and believe in your heart that God raised him from the dead, you will be saved."
       },
       {
@@ -278,6 +304,7 @@ window.BIBLE_THEMES = [
         referenceKo: "로마서 10장 17절",
         referenceEn: "Romans 10:17",
         korean: "그러므로 믿음은 들음에서 나며 들음은 그리스도의 말씀으로 말미암았느니라",
+        koreanModern: "그러므로 믿음은 들음에서 나오고, 들음은 그리스도의 말씀으로 말미암습니다.",
         english: "Consequently, faith comes from hearing the message, and the message is heard through the word about Christ."
       },
       {
@@ -285,6 +312,7 @@ window.BIBLE_THEMES = [
         referenceKo: "에베소서 2장 8절",
         referenceEn: "Ephesians 2:8",
         korean: "너희는 그 은혜에 의하여 믿음으로 말미암아 구원을 받았으니 이것은 너희에게서 난 것이 아니요 하나님의 선물이라",
+        koreanModern: "여러분이 구원받은 것은 은혜로 말미암아 믿음을 통해서입니다. 이것은 여러분에게서 난 것이 아니라 하나님의 선물입니다.",
         english: "For it is by grace you have been saved, through faith—and this is not from yourselves, it is the gift of God—"
       },
       {
@@ -292,6 +320,7 @@ window.BIBLE_THEMES = [
         referenceKo: "로마서 1장 17절",
         referenceEn: "Romans 1:17",
         korean: "복음에는 하나님의 의가 나타나서 믿음으로 믿음에 이르게 하나니 기록된 바 오직 의인은 믿음으로 살리라 함과 같으니라",
+        koreanModern: "복음에는 하나님의 의가 믿음으로 믿음에 이르게 하는 방식으로 나타나 있습니다. 성경에 기록된 대로 '의인은 믿음으로 살 것입니다.'",
         english: "For in the gospel the righteousness of God is revealed—a righteousness that is by faith from first to last, just as it is written: \"The righteous will live by faith.\""
       },
       {
@@ -299,6 +328,7 @@ window.BIBLE_THEMES = [
         referenceKo: "갈라디아서 2장 20절",
         referenceEn: "Galatians 2:20",
         korean: "내가 그리스도와 함께 십자가에 못 박혔나니 그런즉 이제는 내가 사는 것이 아니요 오직 내 안에 그리스도께서 사시는 것이라 이제 내가 육체 가운데 사는 것은 나를 사랑하사 나를 위하여 자기 자신을 버리신 하나님의 아들을 믿는 믿음 안에서 사는 것이라",
+        koreanModern: "내가 그리스도와 함께 십자가에 못 박혔나니 그런즉 이제는 내가 산 것이 아니요 오직 내 안에 그리스도께서 사신 것입니다. 이제 내가 육체 가운데 사는 것은 나를 사랑하사 나를 위하여 자기 몸을 버리신 하나님의 아들을 믿는 믿음 안에서 사는 것입니다.",
         english: "I have been crucified with Christ and I no longer live, but Christ lives in me. The life I now live in the body, I live by faith in the Son of God, who loved me and gave himself for me."
       },
       {
@@ -306,6 +336,7 @@ window.BIBLE_THEMES = [
         referenceKo: "로마서 5장 1절",
         referenceEn: "Romans 5:1",
         korean: "그러므로 우리가 믿음으로 의롭다 하심을 받았으니 우리 주 예수 그리스도로 말미암아 하나님과 화평을 누리자",
+        koreanModern: "그러므로 우리가 믿음으로 의롭다고 인정받았으니, 우리 주 예수 그리스도를 통해 하나님과 평화를 누립시다.",
         english: "Therefore, since we have been justified through faith, we have peace with God through our Lord Jesus Christ,"
       },
       {
@@ -313,6 +344,7 @@ window.BIBLE_THEMES = [
         referenceKo: "갈라디아서 3장 11절",
         referenceEn: "Galatians 3:11",
         korean: "또 하나님 앞에서 아무도 율법으로 말미암아 의롭게 되지 못할 것이 분명하니 이는 의인은 믿음으로 살리라 하였음이라",
+        koreanModern: "또 하나님 앞에서 아무도 율법으로 말미암아 의롭게 되지 못할 것이 분명하니 이는 '의인은 믿음으로 살리라' 하였기 때문입니다.",
         english: "Clearly no one who relies on the law is justified before God, because \"The righteous will live by faith.\""
       },
       {
@@ -320,6 +352,7 @@ window.BIBLE_THEMES = [
         referenceKo: "마가복음 9장 23절",
         referenceEn: "Mark 9:23",
         korean: "예수께서 이르시되 할 수 있거든이 무슨 말이냐 믿는 자에게는 능히 하지 못할 일이 없느니라 하시니",
+        koreanModern: "예수님께서 말씀하셨습니다. \"'하실 수 있으시거든'이라니, 무슨 말이냐? 믿는 사람에게는 모든 것이 가능하다.\"",
         english: "\"'If you can'?\" said Jesus. \"Everything is possible for one who believes.\""
       },
       {
@@ -327,6 +360,7 @@ window.BIBLE_THEMES = [
         referenceKo: "빌립보서 4장 13절",
         referenceEn: "Philippians 4:13",
         korean: "내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라",
+        koreanModern: "나에게 능력 주시는 분 안에서 나는 모든 것을 할 수 있습니다.",
         english: "I can do all this through him who gives me strength."
       },
       {
@@ -334,6 +368,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한일서 5장 4절",
         referenceEn: "1 John 5:4",
         korean: "무릇 하나님께로부터 난 자마다 세상을 이기느니라 세상을 이기는 승리는 이것이니 우리의 믿음이니라",
+        koreanModern: "하나님께로부터 난 사람은 누구나 세상을 이깁니다. 세상을 이기는 승리는 바로 이것입니다. 우리의 믿음입니다.",
         english: "for everyone born of God overcomes the world. This is the victory that has overcome the world, even our faith."
       },
       {
@@ -341,6 +376,7 @@ window.BIBLE_THEMES = [
         referenceKo: "마태복음 21장 22절",
         referenceEn: "Matthew 21:22",
         korean: "너희가 기도할 때에 무엇이든지 믿고 구하는 것은 다 받으리라 하시니",
+        koreanModern: "너희가 믿고 기도하면 무엇이든지 받을 것이다.\"",
         english: "If you believe, you will receive whatever you ask for in prayer."
       },
       {
@@ -348,6 +384,7 @@ window.BIBLE_THEMES = [
         referenceKo: "마가복음 11장 24절",
         referenceEn: "Mark 11:24",
         korean: "그러므로 내가 너희에게 말하노니 무엇이든지 기도하고 구하는 것은 받은 줄로 믿으라 그리하면 너희에게 그대로 되리라",
+        koreanModern: "그러므로 내가 너희에게 말한다. 무엇이든지 기도하며 구하는 것은 이미 받은 줄로 믿어라. 그러면 그대로 이루어질 것이다.",
         english: "Therefore I tell you, whatever you ask for in prayer, believe that you have received it, and it will be yours."
       },
       {
@@ -390,6 +427,7 @@ window.BIBLE_THEMES = [
         referenceKo: "히브리서 12장 2절",
         referenceEn: "Hebrews 12:2",
         korean: "믿음의 주요 또 온전하게 하시는 이인 예수를 바라보자 그는 그 앞에 있는 기쁨을 위하여 십자가를 참으사 부끄러움을 개의치 아니하시더니 하나님 보좌 우편에 앉으셨느니라",
+        koreanModern: "믿음의 주요 또 온전하게 하시는 이인 예수를 바라보자. 그분께서 그 앞에 있는 기쁨을 위하여 십자가를 참으사 부끄러움을 개의치 아니하시더니 하나님 보좌 우편에 앉으셨습니다.",
         english: "fixing our eyes on Jesus, the pioneer and perfecter of faith. For the joy set before him he endured the cross, scorning its shame, and sat down at the right hand of the throne of God."
       },
       {
@@ -397,6 +435,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한복음 11장 25-26절",
         referenceEn: "John 11:25-26",
         korean: "예수께서 이르시되 나는 부활이요 생명이니 나를 믿는 자는 죽어도 살겠고 무릇 살아서 나를 믿는 자는 영원히 죽지 아니하리니 이것을 네가 믿느냐",
+        koreanModern: "예수님이 말씀하셨습니다. \"나는 부활이요 생명이다. 나를 믿는 사람은 죽어도 살 것이고, 살아서 나를 믿는 사람은 영원히 죽지 않을 것이다. 이것을 믿느냐?\"",
         english: "Jesus said to her, \"I am the resurrection and the life. The one who believes in me will live, even though they die; and whoever lives by faith in me will never die. Do you believe this?\""
       },
       {
@@ -404,6 +443,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한복음 14장 1절",
         referenceEn: "John 14:1",
         korean: "너희는 마음에 근심하지 말라 하나님을 믿으니 또 나를 믿으라",
+        koreanModern: "너희는 마음에 걱정하지 마라. 하나님을 믿고 또 나를 믿어라.",
         english: "\"Do not let your hearts be troubled. You believe in God; believe also in me.\""
       },
       {
@@ -411,6 +451,7 @@ window.BIBLE_THEMES = [
         referenceKo: "요한복음 20장 29절",
         referenceEn: "John 20:29",
         korean: "예수께서 이르시되 너는 나를 본 고로 믿느냐 보지 못하고 믿는 자들은 복되도다 하시니라",
+        koreanModern: "예수님께서 말씀하셨습니다. \"너는 나를 보았기 때문에 믿느냐? 보지 않고도 믿는 사람들은 복이 있다.\"",
         english: "Then Jesus told him, \"Because you have seen me, you have believed; blessed are those who have not seen and yet have believed.\""
       },
       {
@@ -418,6 +459,7 @@ window.BIBLE_THEMES = [
         referenceKo: "베드로전서 1장 8절",
         referenceEn: "1 Peter 1:8",
         korean: "예수를 너희가 보지 못하였으나 사랑하는도다 지금도 보지 못하나 믿고 말할 수 없는 영광스러운 즐거움으로 기뻐하니",
+        koreanModern: "예수를 여러분이 보지 못하였으나 사랑합니다. 이제도 보지 못하나 믿고 말할 수 없는 영광스러운 즐거움으로 기뻐합니다.",
         english: "Though you have not seen him, you love him; and even though you do not see him now, you believe in him and are filled with an inexpressible and glorious joy,"
       },
       {
@@ -425,6 +467,7 @@ window.BIBLE_THEMES = [
         referenceKo: "야고보서 2장 17절",
         referenceEn: "James 2:17",
         korean: "이와 같이 행함이 없는 믿음은 그 자체가 죽은 것이라",
+        koreanModern: "이와 같이 행함이 없는 믿음은 그 자체가 죽은 것입니다.",
         english: "In the same way, faith by itself, if it is not accompanied by action, is dead."
       },
       {
@@ -432,6 +475,7 @@ window.BIBLE_THEMES = [
         referenceKo: "야고보서 2장 26절",
         referenceEn: "James 2:26",
         korean: "영혼 없는 몸이 죽은 것 같이 행함이 없는 믿음은 죽은 것이니라",
+        koreanModern: "영혼 없는 몸이 죽은 것 같이 행함이 없는 믿음은 죽은 것입니다.",
         english: "As the body without the spirit is dead, so faith without deeds is dead."
       },
       {
@@ -439,6 +483,7 @@ window.BIBLE_THEMES = [
         referenceKo: "베드로전서 1장 7절",
         referenceEn: "1 Peter 1:7",
         korean: "너희 믿음의 확실함은 불로 연단하여도 없어질 금보다 더 귀하여 예수 그리스도께서 나타나실 때에 칭찬과 영광과 존귀를 얻게 할 것이니라",
+        koreanModern: "여러분의 믿음의 시련이 불로 연단하여도 없어질 금보다 더 귀하여 예수 그리스도께서 나타나실 때에 칭찬과 영광과 존귀를 얻게 하려 함입니다.",
         english: "These have come so that the proven genuineness of your faith—of greater worth than gold, which perishes even though refined by fire—may result in praise, glory and honor when Jesus Christ is revealed."
       },
       {
@@ -446,6 +491,7 @@ window.BIBLE_THEMES = [
         referenceKo: "야고보서 1장 3절",
         referenceEn: "James 1:3",
         korean: "이는 너희 믿음의 시련이 인내를 만들어 내는 줄 너희가 앎이라",
+        koreanModern: "이는 여러분의 믿음의 시련이 인내를 만들어 내는 것을 여러분이 알기 때문입니다.",
         english: "because you know that the testing of your faith produces perseverance."
       },
       {
@@ -453,6 +499,7 @@ window.BIBLE_THEMES = [
         referenceKo: "고린도후서 5장 7절",
         referenceEn: "2 Corinthians 5:7",
         korean: "이는 우리가 믿음으로 행하고 보는 것으로 행하지 아니함이로라",
+        koreanModern: "이는 우리가 믿음으로 행하고 보는 것으로 하지 아니함입니다.",
         english: "For we live by faith, not by sight."
       }
     ]
@@ -464,6 +511,8 @@ window.BIBLE_THEMES = [
 window.BIBLE_TEXT_META = {
   koreanVersionName: "개역개정 (대한성서공회)",
   koreanCopyrightNotice: "한글 성경 저작권은 대한성서공회에 있습니다. 공개 배포 전 사용 허가를 확인해 주세요.",
+  modernVersionName: "쉬운 우리말: Open Korean Bible (기완)",
+  modernCopyrightNotice: "쉬운 우리말 본문 출처: Open Korean Bible (기완), https://github.com/open-korean-bible/open-korean-bible, CC BY 4.0. AI 번역 기반 데이터셋이며 신학적 정확성을 보증하지 않습니다.",
   englishVersionName: "New International Version (NIV)",
   englishCopyrightNotice: "Scripture quotations taken from The Holy Bible, New International Version® NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide. \"NIV\" and \"New International Version\" are trademarks registered in the United States Patent and Trademark Office by Biblica, Inc."
 };

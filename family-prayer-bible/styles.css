@@ -445,6 +445,18 @@ a:focus-visible {
   white-space: pre-wrap;
 }
 
+/* 쉬운 우리말(현대어) 본문 — 개역개정 아래에 보조 본문으로 놓는다 */
+.verse-block-modern { border-top: 1px dashed var(--color-border); padding-top: 10px; }
+
+.verse-text-modern {
+  font-size: calc(16px * var(--scale));
+  font-weight: 500;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
 .verse-block-en { border-top: 1px dashed var(--color-border); padding-top: 10px; }
 
 .verse-text-en {

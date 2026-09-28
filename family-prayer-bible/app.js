@@ -85,6 +85,15 @@
           errors.push('[' + label + '] id ' + v.id + ': ' + field + ' 값에 HTML/스크립트 태그로 의심되는 내용이 포함되어 있습니다.');
         }
       });
+
+      // koreanModern(쉬운 우리말)은 선택 항목이지만, 넣었다면 내용이 있어야 한다.
+      if (v.koreanModern !== undefined) {
+        if (typeof v.koreanModern !== 'string' || v.koreanModern.trim().length === 0) {
+          errors.push('[' + label + '] id ' + v.id + ': koreanModern 값이 비어 있습니다. (필요 없으면 항목 자체를 지우세요)');
+        } else if (SCRIPT_TAG_PATTERN.test(v.koreanModern) || HTML_TAG_PATTERN.test(v.koreanModern)) {
+          errors.push('[' + label + '] id ' + v.id + ': koreanModern 값에 HTML/스크립트 태그로 의심되는 내용이 포함되어 있습니다.');
+        }
+      }
     });
 
     for (var i = 1; i <= verses.length; i++) {
@@ -642,6 +651,9 @@
     if (meta.koreanVersionName) {
       lines.push('<p>한글 성경: ' + escapeHtml(meta.koreanVersionName) + '</p>');
     }
+    if (meta.modernVersionName) {
+      lines.push('<p>' + escapeHtml(meta.modernVersionName) + '</p>');
+    }
     if (meta.englishVersionName) {
       lines.push('<p>English Bible: ' + escapeHtml(meta.englishVersionName) + '</p>');
     }
@@ -650,6 +662,9 @@
     }
     if (meta.koreanCopyrightNotice) {
       lines.push('<p>' + escapeHtml(meta.koreanCopyrightNotice) + '</p>');
+    }
+    if (meta.modernCopyrightNotice) {
+      lines.push('<p>' + escapeHtml(meta.modernCopyrightNotice) + '</p>');
     }
     footer.innerHTML = lines.join('');
   }
@@ -850,6 +865,8 @@
   var elTurnBadge = $('turn-badge');
   var elReference = $('reading-reference');
   var elKorean = $('verse-text-ko');
+  var elModern = $('verse-text-modern');
+  var elModernBlock = $('verse-block-modern');
   var elEnglish = $('verse-text-en');
   var elSpeechStatus = $('speech-status');
   var btnListen = $('btn-listen');
@@ -900,6 +917,11 @@
 
     elReference.textContent = verseId + '번 · ' + verse.referenceKo + ' · ' + verse.referenceEn;
     elKorean.textContent = cleanText(verse.korean);
+
+    // 쉬운 우리말 본문은 있는 구절에만 표시한다.
+    var modern = typeof verse.koreanModern === 'string' ? cleanText(verse.koreanModern) : '';
+    elModern.textContent = modern;
+    elModernBlock.hidden = modern.length === 0;
 
     Speech.cancel();
     Speech.prepare(cleanText(verse.english), elEnglish, state.speechRate);
