@@ -487,6 +487,62 @@ a:focus-visible {
 
 .reading-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
+.reading-sub-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ---------- 구절 선택(번호로 바로 이동) ---------- */
+.picker-box { max-width: 380px; text-align: center; }
+.picker-title {
+  margin: 0 0 4px;
+  font-size: calc(17px * var(--scale));
+  color: var(--color-navy);
+}
+.picker-sub {
+  margin: 0 0 12px;
+  font-size: calc(12px * var(--scale));
+  color: var(--color-text-muted);
+}
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  max-height: 46vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin-bottom: 12px;
+  padding: 2px;
+}
+.picker-btn {
+  min-height: 44px;
+  border-radius: 10px;
+  border: 2px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-navy);
+  font-size: calc(15px * var(--scale));
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+/* 이미 읽은 구절은 은은한 골드 배경으로 구분 (색만으로 구분하지 않도록 · 표시도 함께) */
+.picker-btn.is-done {
+  background: var(--color-gold-soft);
+  border-color: var(--color-gold);
+}
+.picker-btn.is-current {
+  background: var(--color-navy);
+  color: var(--color-on-primary);
+  border-color: var(--color-navy);
+}
+.picker-legend {
+  font-size: calc(11px * var(--scale));
+  color: var(--color-text-muted);
+  margin: 0 0 10px;
+}
+
 /* ---------- 완료 화면 ---------- */
 .complete-box {
   margin: auto 0;

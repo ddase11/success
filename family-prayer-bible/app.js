@@ -193,6 +193,8 @@
       if (!screens[key]) return;
       screens[key].hidden = key !== name;
     });
+    var picker = $('verse-picker');
+    if (picker) picker.hidden = true; // 화면을 옮기면 열려 있던 구절 선택창은 닫는다
     window.scrollTo(0, 0);
   }
 
@@ -1047,6 +1049,84 @@
     showScreen('home');
     renderHome();
   }));
+
+  /* ---------------------------------------------------------
+   * 7-1. 구절 선택 (번호를 눌러 그 구절로 바로 이동)
+   * --------------------------------------------------------- */
+  var versePicker = $('verse-picker');
+  var versePickerGrid = $('verse-picker-grid');
+
+  function openVersePicker() {
+    if (!state.session) return;
+    var key = currentThemeKey();
+    var currentId = currentSessionVerseId();
+    var done = themeState(key).completedIds;
+    var verses = versesForTheme(key);
+
+    $('verse-picker-sub').textContent = themeName(key) + ' · 전체 ' + verses.length + '구절 (읽은 구절은 ✓ 표시)';
+
+    versePickerGrid.innerHTML = '';
+    verses.forEach(function (verse) {
+      var isDone = done.indexOf(verse.id) !== -1;
+      var isCurrent = verse.id === currentId;
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'picker-btn' + (isDone ? ' is-done' : '') + (isCurrent ? ' is-current' : '');
+      btn.setAttribute('data-verse-id', String(verse.id));
+      btn.setAttribute('aria-label',
+        verse.id + '번 ' + verse.referenceKo + (isCurrent ? ' (지금 읽는 중)' : (isDone ? ' (읽음)' : '')));
+      if (isCurrent) btn.setAttribute('aria-current', 'true');
+      btn.textContent = verse.id + (isDone && !isCurrent ? '✓' : '');
+      versePickerGrid.appendChild(btn);
+    });
+
+    versePicker.hidden = false;
+    var currentBtn = versePickerGrid.querySelector('.is-current');
+    if (currentBtn && currentBtn.scrollIntoView) currentBtn.scrollIntoView({ block: 'center' });
+    $('verse-picker-close').focus();
+  }
+
+  function closeVersePicker() {
+    versePicker.hidden = true;
+  }
+
+  function jumpToVerse(verseId) {
+    if (!state.session) return;
+    Speech.cancel();
+    var idx = state.session.verseIds.indexOf(verseId);
+    if (idx === -1) {
+      // 이번 회차 범위 밖의 구절이면, 그 주제 전체를 대상으로 회차를 다시 잡는다.
+      state.session = {
+        themeKey: state.session.themeKey,
+        verseIds: buildSessionVerseIds(state.session.themeKey, 1),
+        index: verseId - 1
+      };
+    } else {
+      state.session.index = idx;
+    }
+    saveState();
+    renderVerse();
+  }
+
+  $('btn-verse-picker').addEventListener('click', withLock(function () {
+    openVersePicker();
+  }));
+  $('verse-picker-close').addEventListener('click', function () { closeVersePicker(); });
+  versePicker.addEventListener('click', function (e) {
+    // 바깥 어두운 영역을 누르면 닫는다
+    if (e.target === versePicker) closeVersePicker();
+  });
+  versePickerGrid.addEventListener('click', withLock(function (e) {
+    var btn = e.target.closest('.picker-btn');
+    if (!btn) return;
+    closeVersePicker();
+    jumpToVerse(parseInt(btn.getAttribute('data-verse-id'), 10));
+  }));
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !versePicker.hidden) closeVersePicker();
+  });
 
   /* ---------------------------------------------------------
    * 8. 완료 화면
