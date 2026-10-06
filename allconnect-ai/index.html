@@ -32,7 +32,7 @@ a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
 section{scroll-margin-top:var(--nav)}
-.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;display:block}
+.eyebrow{font-family:var(--mono);font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;display:block}
 h1,h2,h3{font-weight:650;letter-spacing:-.04em;line-height:1.22}
 h2{font-size:clamp(28px,4vw,42px);color:var(--blue)}
 .lead{color:var(--body);font-size:17px;max-width:620px}
@@ -53,11 +53,11 @@ h2{font-size:clamp(28px,4vw,42px);color:var(--blue)}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:-.04em}
 .brand img{width:34px;height:34px;object-fit:contain}
 .brand small{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--mute);letter-spacing:0;margin-left:2px}
-.links{display:flex;gap:4px;list-style:none}
-.links a{display:block;padding:6px 14px;border-radius:100px;font-size:14px;color:var(--body);transition:color .2s,background .2s}
+.links{display:flex;gap:2px;list-style:none}
+.links a{display:block;padding:6px 14px;border-radius:100px;font-size:21px;font-weight:500;letter-spacing:-.03em;color:var(--ink);transition:color .2s,background .2s}
 .links a:hover{background:var(--canvas-soft-2);color:var(--ink)}
-.links a.active{color:var(--ink);font-weight:600;background:var(--canvas-soft-2)}
-.nav-cta{height:36px;padding:0 16px;font-size:13.5px}
+.links a.active{color:var(--ink);font-weight:700;background:var(--canvas-soft-2)}
+.nav-cta{height:42px;padding:0 20px;font-size:16px}
 .burger{display:none;width:40px;height:40px;border-radius:10px;position:relative}
 .burger span,.burger span::before,.burger span::after{content:"";position:absolute;left:11px;width:18px;height:1.6px;background:var(--ink);transition:.25s}
 .burger span{top:19px}.burger span::before{left:0;top:-6px}.burger span::after{left:0;top:6px}
@@ -74,30 +74,32 @@ h2{font-size:clamp(28px,4vw,42px);color:var(--blue)}
   filter:blur(36px);animation:mesh 14s ease-in-out infinite alternate}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to bottom,transparent 55%,var(--canvas-soft))}
 @keyframes mesh{to{transform:translate3d(0,22px,0) scale(1.06)}}
-.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;border-radius:100px;background:rgba(255,255,255,.8);box-shadow:0 0 0 1px var(--hairline);font-family:var(--mono);font-size:12px;color:var(--body);margin-bottom:28px}
-.pill i{width:6px;height:6px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px rgba(0,112,243,.16)}
+.pill{display:inline-flex;align-items:center;gap:12px;padding:10px 24px 10px 18px;border-radius:100px;background:var(--ink);box-shadow:0 8px 24px -8px rgba(0,0,0,.4);font-family:var(--mono);font-size:16px;font-weight:600;letter-spacing:.08em;color:#fff;margin-bottom:28px}
+.pill i{width:12px;height:12px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px rgba(0,212,255,.3),0 0 14px 2px rgba(0,212,255,.9);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 7px rgba(0,212,255,.12),0 0 18px 4px rgba(0,212,255,.9)}}
 .hero h1{font-size:clamp(36px,6.4vw,68px);font-weight:700;letter-spacing:-.05em;line-height:1.14;margin-bottom:24px}
 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero .lead{margin:0 auto 36px;font-size:18px}
 .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.channels{margin-top:56px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--mute);display:flex;gap:10px 28px;justify-content:center;flex-wrap:wrap}
+.channels{margin-top:56px;font-family:var(--mono);font-size:14px;font-weight:500;letter-spacing:.06em;color:var(--body);display:flex;gap:10px 28px;justify-content:center;flex-wrap:wrap}
 
 /* About */
 .about{background:var(--canvas)}
 .about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:start}
 .about-grid p+p{margin-top:16px}
 .about-body{color:var(--body);font-size:17px}
-.ceo{background:var(--canvas-soft);border-radius:16px;padding:32px;box-shadow:var(--shadow)}
-.ceo-top{display:flex;align-items:center;gap:16px;margin-bottom:20px}
-.ceo-top img{width:56px;height:56px;object-fit:contain;background:#fff;border-radius:14px;padding:8px;box-shadow:0 0 0 1px var(--hairline)}
-.ceo h3{font-size:20px}
-.ceo-role{font-family:var(--mono);font-size:12px;color:var(--mute)}
-.ceo ul{list-style:none;border-top:1px solid var(--hairline)}
-.ceo li{padding:14px 0;border-bottom:1px solid var(--hairline);display:flex;gap:12px;font-size:15px;color:var(--body)}
-.ceo li:last-child{border:0;padding-bottom:0}
-.ceo li b{color:var(--ink);font-weight:600;min-width:84px}
+.team{background:var(--canvas-soft);border-radius:16px;padding:36px 36px 32px;box-shadow:var(--shadow)}
+.team h2{font-size:clamp(28px,4vw,42px);color:var(--blue);margin-bottom:6px}
+.team-sub{font-size:15px;color:var(--body);margin-bottom:22px}
+.team ul{list-style:none;border-top:1px solid var(--hairline)}
+.team li{padding:13px 0 13px 26px;border-bottom:1px solid var(--hairline);font-size:16px;color:var(--ink);position:relative;line-height:1.5}
+.team li::before{content:"";position:absolute;left:2px;top:21px;width:10px;height:10px;border-radius:50%;background:var(--grad)}
+.team .lead-line{margin-top:22px;padding:16px 18px;border-radius:12px;background:#e8f1ff;color:#0b3fa8;font-size:16px;font-weight:600;line-height:1.5}
+.team .lead-line small{display:block;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--blue);letter-spacing:.06em;margin-bottom:2px}
 .values{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:64px}
-.value{padding:28px;border-radius:12px;background:var(--canvas-soft);box-shadow:var(--shadow)}
+.value{padding:28px;border-radius:12px;background:var(--canvas-soft);box-shadow:var(--shadow);cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s}
+.value:hover,.value.on{transform:translateY(-3px);background:#fff;box-shadow:0 0 0 2px var(--blue),var(--shadow-lg)}
+.value .rel{display:block;margin-top:14px;font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--blue)}
 .value h3{font-size:18px;margin:14px 0 8px}
 .value p{font-size:15px;color:var(--body)}
 .ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--canvas);box-shadow:0 0 0 1px var(--hairline);color:var(--blue)}
@@ -108,17 +110,19 @@ h2{font-size:clamp(28px,4vw,42px);color:var(--blue)}
 .svc{grid-column:span 2;background:var(--canvas);border-radius:12px;padding:28px;box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s;position:relative}
 .svc:nth-child(n+4){grid-column:span 3}
 .svc:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
-.svc .no{font-family:var(--mono);font-size:12px;color:var(--mute);position:absolute;top:28px;right:28px}
-.svc h3{font-size:19px;margin:18px 0 8px}
-.svc p{font-size:15px;color:var(--body)}
-.tag{display:inline-block;margin-left:8px;padding:1px 9px;border-radius:100px;background:var(--canvas-soft-2);font-size:11.5px;font-weight:500;color:var(--body);vertical-align:2px;letter-spacing:0}
+.svc.hl{transform:translateY(-6px);background:#eaf3ff;box-shadow:0 0 0 2px var(--blue),0 18px 40px -12px rgba(0,112,243,.45)}
+.svc-grid.dim .svc:not(.hl){opacity:.45}
+.svc .no{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--blue);position:absolute;top:28px;right:28px}
+.svc h3{font-size:25px;margin:20px 0 10px;color:var(--blue)}
+.svc p{font-size:18px;line-height:1.6;color:#1747b8}
+.tag{display:inline-block;margin-left:10px;padding:2px 12px;border-radius:100px;background:#e8f1ff;font-size:14px;font-weight:600;color:var(--blue);vertical-align:2px;letter-spacing:0}
 .process{margin-top:96px}
-.process h3{font-size:24px;margin-bottom:8px;color:var(--blue)}
+.process h3{font-size:30px;margin-bottom:8px;color:var(--blue)}
 .steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:32px;border-top:1px solid var(--hairline-strong);counter-reset:s}
-.steps li{padding:24px 24px 24px 0;border-bottom:1px solid var(--hairline);display:grid;grid-template-columns:44px 1fr;gap:4px 0}
-.steps li::before{counter-increment:s;content:counter(s,decimal-leading-zero);font-family:var(--mono);font-size:13px;color:var(--blue);grid-row:span 2;padding-top:3px}
-.steps b{font-weight:600;font-size:16px;letter-spacing:-.03em}
-.steps span{font-size:14px;color:var(--body);line-height:1.55}
+.steps li{padding:24px 24px 24px 0;border-bottom:1px solid var(--hairline);display:grid;grid-template-columns:52px 1fr;gap:6px 0}
+.steps li::before{counter-increment:s;content:counter(s,decimal-leading-zero);font-family:var(--mono);font-size:17px;font-weight:600;color:var(--blue);grid-row:span 2;padding-top:3px}
+.steps b{font-weight:650;font-size:21px;letter-spacing:-.03em;color:var(--blue)}
+.steps span{font-size:16.5px;color:#1747b8;line-height:1.55}
 
 /* Portfolio */
 .pf{background:var(--canvas)}
@@ -189,6 +193,13 @@ h2{font-size:clamp(28px,4vw,42px);color:var(--blue)}
 .done .ok{width:56px;height:56px;border-radius:50%;margin:0 auto 20px;background:#e8f1ff;color:var(--blue);display:grid;place-items:center}
 .done h3{margin-bottom:10px}
 .done p{color:var(--body);font-size:15.5px}
+.kakao-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;height:56px;margin-top:22px;border-radius:14px;background:#fee500;color:#191919;font-weight:700;font-size:16px;letter-spacing:-.02em;transition:transform .2s,box-shadow .2s}
+.kakao-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px -8px rgba(0,0,0,.35)}
+.kakao-btn svg{width:22px;height:22px}
+.done .note{margin-top:14px;font-size:13.5px;color:var(--mute)}
+.done .copied{display:inline-block;margin-top:14px;padding:6px 14px;border-radius:100px;background:#e8f1ff;color:var(--blue);font-size:13.5px;font-weight:600}
+.chip.kakao{background:#fee500;box-shadow:none;color:#191919}
+.chip.kakao svg{color:#191919}
 .form.sent .fields{display:none}.form.sent .done{display:block}
 
 /* Footer */
@@ -215,7 +226,7 @@ footer small{color:var(--mute);font-size:13px}
   .links,.nav-cta{display:none}
   .burger{display:block}
   .nav.open .links{display:flex;flex-direction:column;position:absolute;top:var(--nav);left:0;right:0;background:var(--canvas-soft);padding:12px 24px 20px;border-bottom:1px solid var(--hairline);gap:2px}
-  .nav.open .links a{padding:12px 14px;font-size:16px}
+  .nav.open .links a{padding:12px 14px;font-size:24px}
   .about-grid,.contact-grid,.single{grid-template-columns:1fr;gap:40px}
   .values{grid-template-columns:1fr}
   .svc-grid{grid-template-columns:1fr 1fr}
@@ -279,22 +290,23 @@ footer small{color:var(--mute);font-size:13px}
         <p class="about-body" style="margin-top:24px">올커넥트AI는 AI를 활용해 카드뉴스·캐러셀·릴스 등 SNS 홍보 콘텐츠를 기획하고 제작합니다.</p>
         <p class="about-body">브랜드에 맞는 문구와 디자인을 구성하고, 기존 홈페이지와 문의 링크를 연결해 고객이 필요한 정보를 쉽게 찾도록 돕습니다.</p>
       </div>
-      <aside class="ceo rv">
-        <div class="ceo-top">
-          <img src="/assets/logo-mark.png" alt="">
-          <div><h3>김병훈 대표</h3><div class="ceo-role">FOUNDER &amp; CEO</div></div>
-        </div>
+      <aside class="team rv">
+        <h2>Team</h2>
+        <p class="team-sub">모바일·데이터·AI·SNS 전문가가 함께 만듭니다</p>
         <ul>
-          <li><b>경력</b><span>모바일·데이터·AI 교육·마케팅 분야 15년</span></li>
-          <li><b>전문 영역</b><span>콘텐츠 기획 · 제작 · 운영</span></li>
-          <li><b>일하는 방식</b><span>측정하고, 개선하고, 다시 제안합니다</span></li>
+          <li>10년 이상의 해외향 모바일 핸드폰 개발, 데이터 분석, SNS 분야 경력</li>
+          <li>글로벌 SNS 운영 경험</li>
+          <li>B2B AI 직무교육</li>
+          <li>SNS 콘텐츠 기획·제작·운영</li>
+          <li>대기업 협력 파트너</li>
         </ul>
+        <div class="lead-line"><small>CEO · 김병훈 대표</small>가산디지털단지 TOP CEO 100인 선정</div>
       </aside>
     </div>
     <div class="values">
-      <div class="value rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></div><h3>AI로 빠르게 기획</h3><p>목표 고객과 핵심 메시지를 정리하고, AI로 콘텐츠 방향과 문구를 빠르게 설계합니다.</p></div>
-      <div class="value rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 15l5-4 4 3 3-2 6 4"/><circle cx="9" cy="9" r="1.2"/></svg></div><h3>브랜드에 맞는 제작</h3><p>브랜드 자료와 전문가 설명을 바탕으로 사실에 근거한 문구와 디자인을 제작합니다.</p></div>
-      <div class="value rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 11l7.4-3.8M8.3 13l7.4 3.8"/></svg></div><h3>연결과 성과 개선</h3><p>SNS·홈페이지·문의 경로를 하나로 연결하고, 주간 보고로 결과를 확인해 개선합니다.</p></div>
+      <div class="value rv" data-hl="1,2" tabindex="0" role="button"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></div><h3>AI로 빠르게 기획</h3><p>목표 고객과 핵심 메시지를 정리하고, AI로 콘텐츠 방향과 문구를 빠르게 설계합니다.</p><span class="rel">관련 서비스 01 · 02 ↓</span></div>
+      <div class="value rv" data-hl="1,5" tabindex="0" role="button"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 15l5-4 4 3 3-2 6 4"/><circle cx="9" cy="9" r="1.2"/></svg></div><h3>브랜드에 맞는 제작</h3><p>브랜드 자료와 전문가 설명을 바탕으로 사실에 근거한 문구와 디자인을 제작합니다.</p><span class="rel">관련 서비스 01 · 05 ↓</span></div>
+      <div class="value rv" data-hl="3,4" tabindex="0" role="button"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 11l7.4-3.8M8.3 13l7.4 3.8"/></svg></div><h3>연결과 성과 개선</h3><p>SNS·홈페이지·문의 경로를 하나로 연결하고, 주간 보고로 결과를 확인해 개선합니다.</p><span class="rel">관련 서비스 03 · 04 ↓</span></div>
     </div>
   </div>
 </section>
@@ -378,6 +390,7 @@ footer small{color:var(--mute);font-size:13px}
         <p class="lead">파트너십을 통해 더 빠르고 아름다운 디지털 프로덕트를 론칭하세요. 24시간 이내에 전문 컨설턴트가 회신드립니다.</p>
         <div class="chips">
           <a class="chip" href="mailto:ddase1@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>ddase1@gmail.com</a>
+          <a class="chip kakao" href="http://pf.kakao.com/_tkfBX/chat" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.5.1 1 .1 1.6.1 5.5 0 10-3.600 10-8S17.500 3 12 3z"/></svg>카카오톡 채널 문의</a>
           <a class="chip" href="tel:01032454181"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>010-3245-4181</a>
         </div>
         <div class="perks">
@@ -397,13 +410,15 @@ footer small{color:var(--mute);font-size:13px}
             <div class="field"><label for="f-email">이메일</label><input id="f-email" name="email" type="email" placeholder="example@domain.com" required autocomplete="email"></div>
             <div class="field"><label for="f-msg">프로젝트 설명</label><textarea id="f-msg" name="message" placeholder="요청 사항과 디자인 레퍼런스를 적어주세요." required></textarea></div>
             <button class="submit" type="submit" id="submit">의뢰 전송하기</button>
-            <p class="err" id="err" role="alert">전송에 실패했습니다. 잠시 후 다시 시도하시거나 ddase1@gmail.com으로 직접 문의해주세요.</p>
           </div>
         </form>
         <div class="done" role="status">
           <div class="ok"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-          <h3>의뢰가 접수되었습니다</h3>
-          <p>24시간 이내에 전문 컨설턴트가<br>입력하신 이메일로 회신드리겠습니다.</p>
+          <h3>의뢰 내용이 준비되었습니다</h3>
+          <p>아래 버튼을 눌러 올커넥트AI 카카오톡 채널에서<br>빠르게 상담을 이어가 보세요.</p>
+          <span class="copied" id="copied">입력하신 내용이 복사되었습니다 · 채팅창에 붙여넣기 하세요</span>
+          <a class="kakao-btn" id="kakao-go" href="http://pf.kakao.com/_tkfBX/chat" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.5.1 1 .1 1.6.1 5.5 0 10-3.600 10-8S17.500 3 12 3z"/></svg>카카오톡으로 문의 보내기</a>
+          <p class="note" id="mail-note">24시간 이내에 전문 컨설턴트가 회신드립니다.</p>
         </div>
       </div>
     </div>
@@ -489,19 +504,49 @@ const links=[...nav.querySelectorAll('.links a')];
 function spy(){const y=scrollY+120;let cur=null;secs.forEach(s=>{if(s.offsetTop<=y)cur=s.id});links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur))}
 addEventListener('scroll',spy,{passive:true});spy();
 
+/* ── 회사소개 박스 hover → 관련 서비스 카드 음영 ── */
+const svcGrid=document.querySelector('.svc-grid'),svcs=[...svcGrid.querySelectorAll('.svc')];
+let hlTimer;
+function setHl(box,on){
+  clearTimeout(hlTimer);
+  const ids=on?box.dataset.hl.split(',').map(n=>+n-1):[];
+  svcs.forEach((c,i)=>c.classList.toggle('hl',ids.includes(i)));
+  svcGrid.classList.toggle('dim',on);
+  document.querySelectorAll('.value').forEach(v=>v.classList.toggle('on',on&&v===box));
+}
+document.querySelectorAll('.value').forEach(v=>{
+  v.addEventListener('mouseenter',()=>setHl(v,true));
+  v.addEventListener('mouseleave',()=>setHl(v,false));
+  v.addEventListener('focus',()=>setHl(v,true));
+  v.addEventListener('blur',()=>setHl(v,false));
+  v.addEventListener('click',()=>{ // 터치/클릭: 서비스 영역으로 이동 + 강조 유지
+    setHl(v,true);
+    document.getElementById('services').scrollIntoView({behavior:reduce?'auto':'smooth'});
+    hlTimer=setTimeout(()=>setHl(v,false),3500);
+  });
+});
+
 /* ── Reveal ── */
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
-/* ── Contact form (Netlify Forms) ── */
-const form=document.getElementById('contact-form'),box=document.getElementById('form-box'),err=document.getElementById('err'),btn=document.getElementById('submit');
+/* ── Contact form: Netlify Forms(이메일 접수) + 카카오톡 채널 연결 ── */
+const form=document.getElementById('contact-form'),box=document.getElementById('form-box'),btn=document.getElementById('submit');
 form.addEventListener('submit',async e=>{
-  e.preventDefault();err.style.display='none';btn.disabled=true;btn.textContent='전송 중…';
+  e.preventDefault();btn.disabled=true;btn.textContent='전송 중…';
+  const fd=new FormData(form);
+  const text=`[올커넥트AI 프로젝트 의뢰]\n성함/기업명: ${fd.get('name')}\n이메일: ${fd.get('email')}\n\n프로젝트 설명:\n${fd.get('message')}`;
+  let copied=false;
+  try{await navigator.clipboard.writeText(text);copied=true}catch{}
+  let saved=false;
   try{
-    const r=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(form)).toString()});
-    if(!r.ok)throw 0;
-    box.classList.add('sent');document.getElementById('step-num').textContent='STEP 2 / 2';document.getElementById('step-label').textContent='접수 완료';
-  }catch{err.style.display='block';btn.disabled=false;btn.textContent='의뢰 전송하기'}
+    const r=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(fd).toString()});
+    saved=r.ok;
+  }catch{}
+  document.getElementById('copied').style.display=copied?'inline-block':'none';
+  document.getElementById('mail-note').textContent=saved?'이메일 접수가 완료되었습니다. 24시간 이내에 회신드립니다.':'카카오톡 채널로 보내주시면 가장 빠르게 확인해 회신드립니다.';
+  box.classList.add('sent');
+  document.getElementById('step-num').textContent='STEP 2 / 2';document.getElementById('step-label').textContent='카카오톡으로 이어가기';
 });
 </script>
 </body>
