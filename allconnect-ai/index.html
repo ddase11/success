@@ -33,7 +33,6 @@ img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
-section{scroll-margin-top:var(--nav)}
 .eyebrow{font-family:var(--mono);font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;display:block}
 h1,h2,h3{font-weight:650;letter-spacing:-.04em;line-height:1.22}
 h2{font-size:clamp(28px,4vw,42px);color:var(--blue)}
@@ -149,7 +148,7 @@ h2{font-size:clamp(28px,4vw,42px);color:var(--blue)}
 .card-img img{height:100%;width:100%;object-fit:cover;-webkit-user-drag:none;user-select:none}
 .single{display:grid;grid-template-columns:minmax(0,420px) 1fr;gap:40px;align-items:center}
 .single .card-img{height:auto;width:100%}
-.single .card-img img{width:100%;height:auto}
+.single .card-img img{width:100%;height:100%}
 .single ul{list-style:none;margin-top:16px;display:grid;gap:8px;font-size:15px;color:var(--body)}
 .single li{padding-left:18px;position:relative}
 .single li::before{content:"";position:absolute;left:0;top:.72em;width:8px;height:1.5px;background:var(--blue)}
@@ -169,6 +168,7 @@ h2{font-size:clamp(28px,4vw,42px);color:var(--blue)}
 .chat img{width:100%;height:auto;-webkit-user-drag:none;user-select:none}
 
 /* Contact */
+.contact{background:var(--canvas)}
 .contact-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:72px;align-items:start}
 .contact h2{font-size:clamp(30px,4.4vw,46px);margin-bottom:20px}
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin:28px 0 14px}
@@ -295,10 +295,9 @@ footer small{color:var(--mute);font-size:13px}
   <div class="wrap">
     <a class="brand" href="#top" aria-label="올커넥트AI 홈"><img src="/assets/logo-mark.png" alt="" width="34" height="34"><span>올커넥트AI<small>AllconnectAI</small></span></a>
     <ul class="links">
+      <li><a href="#portfolio">포트폴리오</a></li>
       <li><a href="#about">회사소개</a></li>
       <li><a href="#services">서비스</a></li>
-      <li><a href="#portfolio">포트폴리오</a></li>
-      <li><a href="#testimonials">후기</a></li>
       <li><a href="#contact">문의</a></li>
     </ul>
     <a class="btn btn-primary nav-cta" href="#contact">무료 상담</a>
@@ -318,6 +317,41 @@ footer small{color:var(--mute);font-size:13px}
       <a class="btn btn-secondary" href="#portfolio">포트폴리오 보기</a>
     </div>
     <div class="channels"><span>INSTAGRAM</span><span>CARD NEWS</span><span>REELS</span><span>BLOG</span><span>AEO · GEO</span></div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="sec pf" id="portfolio">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Portfolio</span>
+      <h2>포트폴리오</h2>
+      <p class="lead">카테고리별 카드뉴스 작업물입니다. 좌우로 밀어서 확인하고, 이미지를 눌러 크게 볼 수 있습니다.</p>
+    </div>
+    <div id="pf-rows"></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="sec voice" id="testimonials">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow">Testimonials</span>
+        <h2>고객의 목소리</h2>
+        <p class="lead">고객이 보내주신 메시지입니다.</p>
+      </div>
+      <div class="arrows" data-for="voice-slider"></div>
+    </div>
+    <div class="slider" id="voice-slider">
+      <div class="track" data-auto="1">
+        <figure class="chat"><img src="/assets/chat-1.png" alt="카카오톡 고객 메시지: 시안 너무 만족합니다" width="840" height="456"></figure>
+        <figure class="chat"><img src="/assets/chat-2.png" alt="카카오톡 고객 메시지: 수정 반영과 응답이 빨라요" width="840" height="404"></figure>
+        <figure class="chat"><img src="/assets/chat-3.png" alt="카카오톡 고객 메시지: 인스타 문의가 늘었어요" width="840" height="500"></figure>
+        <figure class="chat"><img src="/assets/chat-4.png" alt="카카오톡 고객 메시지: 병원 분위기에 맞는 디자인" width="840" height="404"></figure>
+        <figure class="chat"><img src="/assets/chat-5.png" alt="카카오톡 고객 메시지: 진행 과정이 투명해 믿음이 갔어요" width="840" height="546"></figure>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -377,41 +411,6 @@ footer small{color:var(--mute);font-size:13px}
         <li><b>기획·제작</b><span>브랜드 자료와 제품 정보를 바탕으로 원고·디자인·영상을 제작하고, 사실과 표현을 확인해 고객 승인을 받습니다.</span></li>
         <li><b>납품·개선</b><span>확정 파일 전달 또는 승인된 게시·적용 후, 결과 집계와 주간 보고로 다음 실행안을 제안합니다.</span></li>
       </ol>
-    </div>
-  </div>
-</section>
-
-<!-- PORTFOLIO -->
-<section class="sec pf" id="portfolio">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <span class="eyebrow">Portfolio</span>
-      <h2>포트폴리오</h2>
-      <p class="lead">카테고리별 카드뉴스 작업물입니다. 좌우로 밀어서 확인하고, 이미지를 눌러 크게 볼 수 있습니다.</p>
-    </div>
-    <div id="pf-rows"></div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="sec voice" id="testimonials">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div>
-        <span class="eyebrow">Testimonials</span>
-        <h2>고객의 목소리</h2>
-        <p class="lead">고객이 보내주신 메시지입니다.</p>
-      </div>
-      <div class="arrows" data-for="voice-slider"></div>
-    </div>
-    <div class="slider" id="voice-slider">
-      <div class="track" data-auto="1">
-        <figure class="chat"><img src="/assets/chat-1.png" alt="카카오톡 고객 메시지: 시안 너무 만족합니다"></figure>
-        <figure class="chat"><img src="/assets/chat-2.png" alt="카카오톡 고객 메시지: 수정 반영과 응답이 빨라요"></figure>
-        <figure class="chat"><img src="/assets/chat-3.png" alt="카카오톡 고객 메시지: 인스타 문의가 늘었어요"></figure>
-        <figure class="chat"><img src="/assets/chat-4.png" alt="카카오톡 고객 메시지: 병원 분위기에 맞는 디자인"></figure>
-        <figure class="chat"><img src="/assets/chat-5.png" alt="카카오톡 고객 메시지: 진행 과정이 투명해 믿음이 갔어요"></figure>
-      </div>
     </div>
   </div>
 </section>
@@ -487,7 +486,7 @@ PF.forEach((p,i)=>{
   const imgs=Array.from({length:p.n},(_,k)=>`<div class="card-img" style="aspect-ratio:${p.r}"><img src="/assets/pf/${p.key}-${k+1}.webp" alt="${p.alt} ${k+1}" draggable="false"></div>`).join('');
   rows.insertAdjacentHTML('beforeend',`<div class="pf-row rv"><div class="pf-meta"><div><span class="case">${p.case} · ${p.cat}</span><p>${p.topic}</p></div><div class="arrows" data-for="pf-${i}">${arrows}</div></div><div class="slider" id="pf-${i}"><div class="track" data-auto="1">${imgs}</div></div></div>`);
 });
-rows.insertAdjacentHTML('beforeend',`<div class="pf-row rv"><div class="pf-meta"><div><span class="case">CASE 05 · 생활정보 · 원페이지 카드</span><h3>절약 차별화 컨셉 원페이지 카드</h3></div></div><div class="single"><div class="card-img"><img src="/assets/pf/milk-1.webp" alt="우유 용량별 가격 비교 원페이지 카드" loading="lazy"></div><div><p style="font-size:19px;font-weight:600;letter-spacing:-.03em;line-height:1.5">1.8L 한 통 값이면 1L 두 팩을 살 수 있어요. 200mL, 딱 한 잔이 더 생깁니다.</p><ul><li>100mL 단가로 나눠 비교해 “큰 게 싸다”는 통념을 데이터로 확인</li><li>혼자·1~2인·3인 이상, 가구별 추천 용량을 한눈에 정리</li><li>저장과 댓글 참여를 유도하는 마무리 질문 구성</li></ul></div></div></div>`);
+rows.insertAdjacentHTML('beforeend',`<div class="pf-row rv"><div class="pf-meta"><div><span class="case">CASE 05 · 생활정보 · 원페이지 카드</span><h3>절약 차별화 컨셉 원페이지 카드</h3></div></div><div class="single"><div class="card-img" style="aspect-ratio:1/1"><img src="/assets/pf/milk-1.webp" alt="우유 용량별 가격 비교 원페이지 카드" width="900" height="900"></div><div><p style="font-size:19px;font-weight:600;letter-spacing:-.03em;line-height:1.5">1.8L 한 통 값이면 1L 두 팩을 살 수 있어요. 200mL, 딱 한 잔이 더 생깁니다.</p><ul><li>100mL 단가로 나눠 비교해 “큰 게 싸다”는 통념을 데이터로 확인</li><li>혼자·1~2인·3인 이상, 가구별 추천 용량을 한눈에 정리</li><li>저장과 댓글 참여를 유도하는 마무리 질문 구성</li></ul></div></div></div>`);
 
 /* ── Slider: 모든 줄이 같은 속도·같은 방향(왼쪽→오른쪽)으로 끝없이 이동 + 드래그/화살표 ── */
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -553,9 +552,9 @@ addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('on')});
 const nav=document.getElementById('nav'),burger=document.getElementById('burger');
 burger.addEventListener('click',()=>{const o=nav.classList.toggle('open');burger.setAttribute('aria-expanded',o)});
 nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');burger.setAttribute('aria-expanded',false)}));
-const secs=['about','services','portfolio','testimonials','contact'].map(id=>document.getElementById(id));
+const secs=['portfolio','testimonials','about','services','contact'].map(id=>document.getElementById(id));
 const links=[...nav.querySelectorAll('.links a')];
-function spy(){const y=scrollY+120;let cur=null;secs.forEach(s=>{if(s.offsetTop<=y)cur=s.id});links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur))}
+function spy(){const y=scrollY+120;let cur=null;secs.forEach(s=>{if(s.offsetTop<=y)cur=s.id});if(cur==='testimonials')cur='portfolio';links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur))}
 addEventListener('scroll',spy,{passive:true});spy();
 
 /* ── 회사소개 박스 hover → 관련 서비스 카드 음영 ── */
@@ -579,6 +578,10 @@ document.querySelectorAll('.value').forEach(v=>{
     hlTimer=setTimeout(()=>setHl(v,false),3500);
   });
 });
+
+/* ── 주소에 #섹션이 있으면 폰트·이미지 로딩 뒤 위치 재보정 ── */
+function toHash(){if(!location.hash)return;const t=document.getElementById(decodeURIComponent(location.hash.slice(1)));if(t)t.scrollIntoView({behavior:'instant',block:'start'})}
+addEventListener('load',()=>{toHash();(document.fonts&&document.fonts.ready||Promise.resolve()).then(()=>setTimeout(toHash,150))});
 
 /* ── Reveal ── */
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
