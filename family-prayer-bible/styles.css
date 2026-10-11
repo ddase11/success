@@ -515,6 +515,34 @@ a:focus-visible {
   margin: 0;
 }
 
+/* 3단계 안에 함께 보여 주는 연관 말씀 본문 */
+.related-verses {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.related-verse {
+  border-left: 3px solid var(--color-gold-text);
+  padding: 2px 0 2px 9px;
+}
+
+.related-verse-ref {
+  font-size: calc(11px * var(--scale));
+  font-weight: 700;
+  color: var(--color-gold-text);
+  margin: 0 0 2px;
+}
+
+.related-verse-text {
+  font-size: calc(13px * var(--scale));
+  font-weight: 500;
+  color: var(--color-navy);
+  line-height: 1.65;
+  margin: 0;
+}
+
 /* 4단계 나눔과 기도 */
 .verse-block-share {
   border-top: 1px dashed var(--color-border);

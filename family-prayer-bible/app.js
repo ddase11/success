@@ -55,6 +55,31 @@
   // koreanModern은 쉬운 우리말 본문이고, 나머지는 '성령' 주제의 단계별 묵상 안내문이다.
   var OPTIONAL_VERSE_FIELDS = ['koreanModern', 'title', 'reason', 'connection', 'question', 'prayer'];
 
+  // related(연관 말씀)는 선택 항목이며, 넣었다면 참조와 본문이 모두 있어야 한다.
+  function validateRelated(related, label, verseId) {
+    if (related === undefined) return [];
+    if (!Array.isArray(related) || related.length === 0) {
+      return ['[' + label + '] id ' + verseId + ': related가 비어 있거나 배열이 아닙니다. (필요 없으면 항목 자체를 지우세요)'];
+    }
+    var errors = [];
+    related.forEach(function (r, i) {
+      var where = '[' + label + '] id ' + verseId + ': related[' + i + ']';
+      if (!r || typeof r !== 'object') {
+        errors.push(where + '가 객체가 아닙니다.');
+        return;
+      }
+      ['referenceKo', 'korean'].forEach(function (field) {
+        var val = r[field];
+        if (typeof val !== 'string' || val.trim().length === 0) {
+          errors.push(where + '.' + field + ' 값이 비어 있습니다.');
+        } else if (SCRIPT_TAG_PATTERN.test(val) || HTML_TAG_PATTERN.test(val)) {
+          errors.push(where + '.' + field + '에 HTML/스크립트 태그로 의심되는 내용이 포함되어 있습니다.');
+        }
+      });
+    });
+    return errors;
+  }
+
   // 주제의 서론(intro)은 선택 항목이다. 넣었다면 제목과 단락이 모두 채워져 있어야 한다.
   function validateIntro(intro, label) {
     if (intro === undefined) return [];
@@ -128,6 +153,8 @@
           errors.push('[' + label + '] id ' + v.id + ': ' + field + ' 값에 HTML/스크립트 태그로 의심되는 내용이 포함되어 있습니다.');
         }
       });
+
+      errors = errors.concat(validateRelated(v.related, label, v.id));
     });
 
     for (var i = 1; i <= verses.length; i++) {
@@ -969,6 +996,7 @@
     { field: 'reason', block: $('verse-block-reason'), text: $('verse-text-reason') },
     { field: 'connection', block: $('verse-block-connection'), text: $('verse-text-connection') }
   ];
+  var elRelated = $('verse-related');
   var elShareBlock = $('verse-block-share');
   var elQuestion = $('verse-text-question');
   var elPrayer = $('verse-text-prayer');
@@ -1036,6 +1064,28 @@
       s.block.hidden = val.length === 0;
       if (val.length > 0) hasStages = true;
     });
+
+    // 3단계 안의 연관 말씀 본문 (개역개정)
+    var related = Array.isArray(verse.related) ? verse.related : [];
+    elRelated.innerHTML = '';
+    related.forEach(function (r) {
+      var item = document.createElement('div');
+      item.className = 'related-verse';
+
+      var ref = document.createElement('p');
+      ref.className = 'related-verse-ref';
+      ref.textContent = '연관 말씀 · ' + r.referenceKo;
+
+      var body = document.createElement('p');
+      body.className = 'related-verse-text';
+      body.lang = 'ko';
+      body.textContent = cleanText(r.korean);
+
+      item.appendChild(ref);
+      item.appendChild(body);
+      elRelated.appendChild(item);
+    });
+    elRelated.hidden = related.length === 0;
 
     elKorean.textContent = cleanText(verse.korean);
 
