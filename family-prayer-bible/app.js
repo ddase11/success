@@ -36,6 +36,7 @@
       if (typeof theme.name !== 'string' || theme.name.trim().length === 0) {
         errors.push(where + ': name 값이 비어 있습니다.');
       }
+      errors = errors.concat(validateIntro(theme.intro, theme.name || theme.key || where));
       errors = errors.concat(validateVerseList(theme.verses, theme.name || theme.key || where));
     });
 
@@ -48,6 +49,36 @@
     }
 
     return { valid: errors.length === 0, errors: errors };
+  }
+
+  // 구절에 들어갈 수 있는 선택 항목.
+  // koreanModern은 쉬운 우리말 본문이고, 나머지는 '성령' 주제의 단계별 묵상 안내문이다.
+  var OPTIONAL_VERSE_FIELDS = ['koreanModern', 'title', 'reason', 'connection', 'question', 'prayer'];
+
+  // 주제의 서론(intro)은 선택 항목이다. 넣었다면 제목과 단락이 모두 채워져 있어야 한다.
+  function validateIntro(intro, label) {
+    if (intro === undefined) return [];
+    if (!intro || typeof intro !== 'object') {
+      return ['[' + label + '] intro가 객체가 아닙니다. (필요 없으면 항목 자체를 지우세요)'];
+    }
+    var errors = [];
+    ['title', 'heading'].forEach(function (field) {
+      if (typeof intro[field] !== 'string' || intro[field].trim().length === 0) {
+        errors.push('[' + label + '] intro.' + field + ' 값이 비어 있습니다.');
+      }
+    });
+    if (!Array.isArray(intro.paragraphs) || intro.paragraphs.length === 0) {
+      errors.push('[' + label + '] intro.paragraphs가 비어 있거나 배열이 아닙니다.');
+    } else {
+      intro.paragraphs.forEach(function (p, i) {
+        if (typeof p !== 'string' || p.trim().length === 0) {
+          errors.push('[' + label + '] intro.paragraphs[' + i + '] 값이 비어 있습니다.');
+        } else if (SCRIPT_TAG_PATTERN.test(p) || HTML_TAG_PATTERN.test(p)) {
+          errors.push('[' + label + '] intro.paragraphs[' + i + ']에 HTML/스크립트 태그로 의심되는 내용이 포함되어 있습니다.');
+        }
+      });
+    }
+    return errors;
   }
 
   // 한 주제의 구절 목록 검사: id가 1부터 빠짐없이 이어지고, 네 항목이 모두 채워져 있어야 한다.
@@ -86,14 +117,17 @@
         }
       });
 
-      // koreanModern(쉬운 우리말)은 선택 항목이지만, 넣었다면 내용이 있어야 한다.
-      if (v.koreanModern !== undefined) {
-        if (typeof v.koreanModern !== 'string' || v.koreanModern.trim().length === 0) {
-          errors.push('[' + label + '] id ' + v.id + ': koreanModern 값이 비어 있습니다. (필요 없으면 항목 자체를 지우세요)');
-        } else if (SCRIPT_TAG_PATTERN.test(v.koreanModern) || HTML_TAG_PATTERN.test(v.koreanModern)) {
-          errors.push('[' + label + '] id ' + v.id + ': koreanModern 값에 HTML/스크립트 태그로 의심되는 내용이 포함되어 있습니다.');
+      // 선택 항목(쉬운 우리말, '성령' 주제의 단계별 안내문)은 없어도 되지만,
+      // 넣었다면 비어 있지 않은 문자열이어야 한다.
+      OPTIONAL_VERSE_FIELDS.forEach(function (field) {
+        if (v[field] === undefined) return;
+        var val = v[field];
+        if (typeof val !== 'string' || val.trim().length === 0) {
+          errors.push('[' + label + '] id ' + v.id + ': ' + field + ' 값이 비어 있습니다. (필요 없으면 항목 자체를 지우세요)');
+        } else if (SCRIPT_TAG_PATTERN.test(val) || HTML_TAG_PATTERN.test(val)) {
+          errors.push('[' + label + '] id ' + v.id + ': ' + field + ' 값에 HTML/스크립트 태그로 의심되는 내용이 포함되어 있습니다.');
         }
-      }
+      });
     });
 
     for (var i = 1; i <= verses.length; i++) {
@@ -184,6 +218,7 @@
   var screens = {
     error: $('screen-error'),
     home: $('screen-home'),
+    intro: $('screen-intro'),
     guide: $('screen-guide'),
     addVerse: $('screen-add-verse'),
     reading: $('screen-reading'),
@@ -625,17 +660,19 @@
       btn.type = 'button';
       btn.className = 'btn btn-primary btn-large theme-btn';
       btn.setAttribute('data-theme-key', theme.key);
-      btn.setAttribute('aria-label', theme.name + ' 말씀 읽기 시작');
+      var done = t.lastVerseId >= total;
+      btn.setAttribute('aria-label', theme.name + ' 말씀 읽기 시작. ' +
+        (done ? '전체 ' + total + '구절을 모두 읽었습니다. ' : '') +
+        startId + '번부터 시작, 전체 ' + total + '구절');
 
       var nameEl = document.createElement('span');
       nameEl.className = 'theme-btn-name';
       nameEl.textContent = theme.name;
 
+      // 한 줄에 세 개가 들어가므로 안내는 짧게 두 줄로 나눈다.
       var subEl = document.createElement('span');
       subEl.className = 'theme-btn-sub';
-      subEl.textContent = t.lastVerseId >= total
-        ? ('전체 ' + total + '구절 완료 · ' + startId + '번부터')
-        : (startId + '번부터 · 전체 ' + total + '구절');
+      subEl.textContent = (done ? '모두 읽음' : startId + '번부터') + '\n' + total + '구절';
 
       btn.appendChild(nameEl);
       btn.appendChild(subEl);
@@ -735,8 +772,67 @@
     var btn = e.target.closest('.theme-btn');
     if (!btn) return;
     var key = btn.getAttribute('data-theme-key');
-    if (!themeByKey(key)) return;
+    var theme = themeByKey(key);
+    if (!theme) return;
+    if (theme.intro) {
+      showIntro(key);
+      return;
+    }
     startSession(key, startIdFor(key));
+  }));
+
+  /* ---------------------------------------------------------
+   * 6-0. 주제 서론 화면
+   * '성령'처럼 intro가 있는 주제는 30구절을 관통하는 이야기를 먼저 읽는다.
+   * --------------------------------------------------------- */
+  var pendingIntroThemeKey = null;
+
+  function showIntro(key) {
+    var theme = themeByKey(key);
+    if (!theme || !theme.intro) {
+      startSession(key, startIdFor(key));
+      return;
+    }
+    pendingIntroThemeKey = key;
+
+    var intro = theme.intro;
+    $('intro-eyebrow').textContent = theme.name + ' · 전체 ' + totalVerseCount(key) + '구절';
+    $('intro-title').textContent = intro.title;
+    $('intro-heading').textContent = intro.heading;
+
+    var wrap = $('intro-paragraphs');
+    wrap.innerHTML = '';
+    intro.paragraphs.forEach(function (text) {
+      var p = document.createElement('p');
+      p.className = 'intro-paragraph';
+      p.lang = 'ko';
+      p.textContent = text;
+      wrap.appendChild(p);
+    });
+
+    var startBtn = $('btn-intro-start');
+    var startId = startIdFor(key);
+    startBtn.textContent = startId > 1 ? (startId + '번부터 시작하기') : '말씀 시작하기';
+    startBtn.setAttribute('aria-label', theme.name + ' 말씀 ' + startId + '번부터 시작하기');
+
+    showScreen('intro');
+    announce(theme.name + ' 서론. ' + intro.heading);
+  }
+
+  $('btn-intro-start').addEventListener('click', withLock(function () {
+    var key = pendingIntroThemeKey;
+    if (!key || !themeByKey(key)) {
+      showScreen('home');
+      return;
+    }
+    pendingIntroThemeKey = null;
+    startSession(key, startIdFor(key));
+  }));
+
+  $('btn-intro-home').addEventListener('click', withLock(function () {
+    pendingIntroThemeKey = null;
+    renderHome();
+    showScreen('home');
   }));
 
   $('btn-add-verse').addEventListener('click', withLock(function () {
@@ -867,6 +963,16 @@
   var elKorean = $('verse-text-ko');
   var elModern = $('verse-text-modern');
   var elModernBlock = $('verse-block-modern');
+  var elVerseTitle = $('reading-verse-title');
+  // '성령' 주제의 단계별 블록. 해당 항목이 있는 구절에서만 보인다.
+  var stageBlocks = [
+    { field: 'reason', block: $('verse-block-reason'), text: $('verse-text-reason') },
+    { field: 'connection', block: $('verse-block-connection'), text: $('verse-text-connection') }
+  ];
+  var elShareBlock = $('verse-block-share');
+  var elQuestion = $('verse-text-question');
+  var elPrayer = $('verse-text-prayer');
+  var stageLabels = [$('label-stage-ko'), $('label-stage-modern'), $('label-stage-en')];
   var elEnglish = $('verse-text-en');
   var elSpeechStatus = $('speech-status');
   var btnListen = $('btn-listen');
@@ -916,7 +1022,37 @@
     elTurnBadge.textContent = personName + ' 차례';
 
     elReference.textContent = verseId + '번 · ' + verse.referenceKo + ' · ' + verse.referenceEn;
+
+    // 구절 별칭(예: '창조의 성령')은 있는 구절에만 표시한다.
+    var title = typeof verse.title === 'string' ? verse.title.trim() : '';
+    elVerseTitle.textContent = title;
+    elVerseTitle.hidden = title.length === 0;
+
+    // 1단계 이유 / 2단계 연관성: 해당 항목이 있는 구절에만 표시한다.
+    var hasStages = false;
+    stageBlocks.forEach(function (s) {
+      var val = typeof verse[s.field] === 'string' ? verse[s.field].trim() : '';
+      s.text.textContent = val;
+      s.block.hidden = val.length === 0;
+      if (val.length > 0) hasStages = true;
+    });
+
     elKorean.textContent = cleanText(verse.korean);
+
+    // 4단계 나눔/기도
+    var question = typeof verse.question === 'string' ? verse.question.trim() : '';
+    var prayer = typeof verse.prayer === 'string' ? verse.prayer.trim() : '';
+    elQuestion.textContent = question ? '[질문] ' + question : '';
+    elQuestion.hidden = question.length === 0;
+    elPrayer.textContent = prayer ? '[기도] ' + prayer : '';
+    elPrayer.hidden = prayer.length === 0;
+    elShareBlock.hidden = question.length === 0 && prayer.length === 0;
+    if (!elShareBlock.hidden) hasStages = true;
+
+    // 단계 번호 표시(3단계 본문 / 5단계 / 6단계)는 단계 구성이 있는 주제에서만 쓴다.
+    stageLabels.forEach(function (el) {
+      if (el) el.hidden = !hasStages;
+    });
 
     // 쉬운 우리말 본문은 있는 구절에만 표시한다.
     var modern = typeof verse.koreanModern === 'string' ? cleanText(verse.koreanModern) : '';
@@ -934,9 +1070,77 @@
     updateSpeechStatus('');
   }
 
+  // 짝을 이루는 따옴표/괄호 목록. 본문 전체를 감싼 한 겹만 벗겨 낸다.
+  var QUOTE_PAIRS = [['"', '"'], ['\u201C', '\u201D'], ["'", "'"], ['\u2018', '\u2019']];
+
+  // 괄호 짝이 맞는지 확인한다.
+  function parensBalanced(s) {
+    var depth = 0;
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charAt(i);
+      if (c === '(' || c === '\uFF08') depth++;
+      else if (c === ')' || c === '\uFF09') {
+        depth--;
+        if (depth < 0) return false;
+      }
+    }
+    return depth === 0;
+  }
+
+  function countQuote(s, open, close) {
+    var n = 0;
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charAt(i);
+      if (c === open || c === close) n++;
+    }
+    return n;
+  }
+
+  /* 본문 앞뒤에 남은 '불필요한' 따옴표와 괄호만 제거한다.
+   * 문장 내용은 고치지 않으며, 본문 안에서 짝이 맞는 괄호/따옴표는 그대로 둔다.
+   * (예: 시편 62:8의 '(셀라)', 요한복음 7:39의 괄호 설명, 인용문 안의 따옴표) */
   function cleanText(text) {
     if (typeof text !== 'string') return '';
-    return text.trim().replace(/^["'“”‘’()（）]+/, '').replace(/["'“”‘’()（）]+$/, '');
+    var s = text.trim();
+    var changed = true;
+    while (changed && s.length > 1) {
+      changed = false;
+
+      // 본문 전체를 한 겹 감싼 괄호
+      if (/^[(\uFF08]/.test(s) && /[)\uFF09]$/.test(s) && parensBalanced(s.slice(1, -1))) {
+        s = s.slice(1, -1).trim();
+        changed = true;
+        continue;
+      }
+
+      for (var i = 0; i < QUOTE_PAIRS.length; i++) {
+        var open = QUOTE_PAIRS[i][0];
+        var close = QUOTE_PAIRS[i][1];
+        var head = s.charAt(0) === open;
+        var tail = s.charAt(s.length - 1) === close;
+
+        // 본문 전체를 감싼 따옴표: 안쪽에 같은 따옴표가 더 없을 때만 벗긴다.
+        if (head && tail && countQuote(s.slice(1, -1), open, close) === 0) {
+          s = s.slice(1, -1).trim();
+          changed = true;
+          break;
+        }
+        // 짝 없이 하나만 앞이나 뒤에 남은 따옴표
+        if (countQuote(s, open, close) === 1) {
+          if (tail) {
+            s = s.slice(0, -1).trim();
+            changed = true;
+            break;
+          }
+          if (head) {
+            s = s.slice(1).trim();
+            changed = true;
+            break;
+          }
+        }
+      }
+    }
+    return s;
   }
 
   function resetSpeechButtons() {

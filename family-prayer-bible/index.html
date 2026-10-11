@@ -102,6 +102,24 @@
     </footer>
   </main>
 
+  <!-- 주제 서론 화면 (서론이 있는 주제를 시작할 때만 나옵니다) -->
+  <main id="screen-intro" class="screen" hidden aria-labelledby="intro-title">
+    <header class="screen-head">
+      <p class="intro-eyebrow" id="intro-eyebrow"></p>
+      <h1 id="intro-title" class="screen-title intro-screen-title"></h1>
+    </header>
+    <div class="screen-body intro-body">
+      <h2 class="intro-heading" id="intro-heading"></h2>
+      <div class="intro-paragraphs" id="intro-paragraphs"></div>
+    </div>
+    <footer class="screen-foot">
+      <button type="button" id="btn-intro-start" class="btn btn-primary btn-large" aria-label="서론을 읽고 말씀 시작하기">말씀 시작하기</button>
+      <div class="secondary-links">
+        <button type="button" id="btn-intro-home" class="btn btn-ghost btn-small" aria-label="서론 닫고 처음 화면으로 돌아가기">처음 화면으로</button>
+      </div>
+    </footer>
+  </main>
+
   <!-- 사용 방법 화면 -->
   <main id="screen-guide" class="screen" hidden aria-labelledby="guide-title">
     <header class="screen-head">
@@ -109,7 +127,8 @@
     </header>
     <div class="screen-body">
       <ol class="guide-list">
-        <li>‘기도’ 또는 ‘믿음’ 버튼을 누르면 그 주제의 30구절을 순서대로 읽기 시작합니다.</li>
+        <li>‘기도’, ‘믿음’, ‘성령’ 버튼을 누르면 그 주제의 30구절을 순서대로 읽기 시작합니다.</li>
+        <li>‘성령’ 주제는 30구절을 하나로 관통하는 서론을 먼저 읽고, 구절마다 1단계 이유 → 2단계 연관성 → 3단계 본문 → 4단계 나눔과 기도 → 5단계 쉬운 우리말 → 6단계 영어 순서로 보여 줍니다.</li>
         <li>화면에 표시된 가족 이름 차례를 확인하고, 그 사람이 한글 본문을 소리 내어 읽습니다.</li>
         <li>‘영어 듣기’ 버튼을 누르면 영어 본문을 원어민 음성으로 들을 수 있습니다. (선택 사항이며, 여러 번 눌러 반복해서 들어도 됩니다.)</li>
         <li>‘다음 말씀’ 버튼을 눌러 다음 구절로 넘어갑니다. 영어 듣기를 하지 않아도 언제든 넘어갈 수 있습니다.</li>
@@ -193,19 +212,42 @@
 
     <div class="screen-body verse-card">
       <p class="verse-reference" id="reading-reference">빌립보서 4장 6절</p>
+      <p class="verse-title" id="reading-verse-title" hidden></p>
+
+      <!-- 1단계: 이 말씀을 알아야 하는 이유 (해당 항목이 있는 주제에서만 보입니다) -->
+      <div class="verse-block verse-block-note" id="verse-block-reason" hidden>
+        <h2 class="verse-note-label">1단계 · 이유</h2>
+        <p class="verse-text-note" id="verse-text-reason" lang="ko"></p>
+      </div>
+
+      <!-- 2단계: 다른 말씀과의 연관성 -->
+      <div class="verse-block verse-block-note" id="verse-block-connection" hidden>
+        <h2 class="verse-note-label">2단계 · 연관성</h2>
+        <p class="verse-text-note" id="verse-text-connection" lang="ko"></p>
+      </div>
 
       <div class="verse-block verse-block-ko">
         <h2 class="sr-only">한글 본문 (개역개정)</h2>
+        <p class="verse-stage-label" id="label-stage-ko" hidden>3단계 · 본문 (개역개정)</p>
         <p class="verse-text-ko" id="verse-text-ko" lang="ko"></p>
+      </div>
+
+      <!-- 4단계: 가족 나눔 질문과 기도 -->
+      <div class="verse-block verse-block-share" id="verse-block-share" hidden>
+        <h2 class="verse-note-label">4단계 · 나눔과 기도</h2>
+        <p class="verse-text-share" id="verse-text-question" lang="ko"></p>
+        <p class="verse-text-share" id="verse-text-prayer" lang="ko"></p>
       </div>
 
       <div class="verse-block verse-block-modern" id="verse-block-modern">
         <h2 class="sr-only">쉬운 우리말 본문</h2>
+        <p class="verse-stage-label" id="label-stage-modern" hidden>5단계 · 쉬운 우리말</p>
         <p class="verse-text-modern" id="verse-text-modern" lang="ko"></p>
       </div>
 
       <div class="verse-block verse-block-en">
         <h2 class="sr-only">영어 본문</h2>
+        <p class="verse-stage-label" id="label-stage-en" hidden>6단계 · 영어 (NIV)</p>
         <p class="verse-text-en" id="verse-text-en" lang="en"></p>
       </div>
     </div>

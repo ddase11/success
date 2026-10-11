@@ -90,6 +90,10 @@ body {
   flex-direction: column;
   overflow: hidden;
   background: var(--color-bg);
+  /* position을 지정해 두어야 .sr-only(position:absolute)로 숨긴 제목들이
+     이 틀 안에 갇히고 overflow:hidden으로 잘린다. 지정하지 않으면 화면 아래로
+     밀려난 sr-only 요소 때문에 페이지 전체가 스크롤된다. */
+  position: relative;
 }
 
 @supports (height: 100dvh) {
@@ -294,19 +298,26 @@ a:focus-visible {
   font-size: calc(15px * var(--scale));
 }
 
-.theme-buttons { display: flex; flex-direction: column; gap: calc(var(--gap) * 0.7); }
+.theme-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: calc(var(--gap) * 0.7);
+}
 .theme-btn { width: 100%; }
-.theme-btn .theme-btn-name { font-size: calc(18px * var(--scale)); font-weight: 700; }
+.theme-btn .theme-btn-name { font-size: calc(17px * var(--scale)); font-weight: 700; }
 .theme-btn .theme-btn-sub {
-  font-size: calc(11px * var(--scale));
+  font-size: calc(10px * var(--scale));
   font-weight: 500;
+  line-height: 1.35;
   opacity: 0.85;
+  white-space: pre-line;   /* 좁은 화면에서 두 줄로 깔끔하게 나뉘도록 */
 }
 .theme-btn {
   flex-direction: column;
   gap: 1px;
-  min-height: 52px;
-  padding: 8px 12px;
+  min-height: 60px;
+  padding: 8px 6px;
+  text-align: center;
 }
 
 .home-actions-secondary {
@@ -328,6 +339,40 @@ a:focus-visible {
   flex: 0 0 auto;
 }
 .copyright-footer p { margin: 2px 0; }
+
+/* ---------- 주제 서론 화면 ---------- */
+.intro-eyebrow {
+  font-size: calc(12px * var(--scale));
+  font-weight: 700;
+  color: var(--color-gold-text);
+  text-align: center;
+  margin: 0;
+}
+
+.intro-screen-title { font-size: calc(18px * var(--scale)); line-height: 1.45; }
+
+.intro-body { justify-content: flex-start; }
+
+.intro-heading {
+  font-size: calc(14px * var(--scale));
+  font-weight: 700;
+  color: var(--color-navy);
+  line-height: 1.6;
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+.intro-paragraphs { display: flex; flex-direction: column; gap: 10px; flex: 0 0 auto; }
+
+.intro-paragraph {
+  font-size: calc(13px * var(--scale));
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.75;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  margin: 0;
+}
 
 /* ---------- 안내 / 말씀 추가 화면 ---------- */
 .guide-list { padding-left: 20px; margin: 0; }
@@ -434,7 +479,56 @@ a:focus-visible {
   flex: 0 0 auto;
 }
 
+.verse-title {
+  font-size: calc(13px * var(--scale));
+  font-weight: 600;
+  color: var(--color-navy-soft);
+  text-align: center;
+  margin: 0;
+  flex: 0 0 auto;
+}
+
 .verse-block { overflow-wrap: break-word; word-break: keep-all; flex: 0 0 auto; }
+
+/* 단계 번호 표시 (3단계 본문 / 5단계 / 6단계) — 단계 구성이 있는 주제에서만 보인다 */
+.verse-stage-label,
+.verse-note-label {
+  font-size: calc(11px * var(--scale));
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--color-gold-text);
+  margin: 0 0 4px;
+}
+
+/* 1단계 이유 / 2단계 연관성 — 성경 본문이 아닌 묵상 안내문 */
+.verse-block-note {
+  background: rgba(143, 106, 31, 0.07);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.verse-text-note {
+  font-size: calc(13px * var(--scale));
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* 4단계 나눔과 기도 */
+.verse-block-share {
+  border-top: 1px dashed var(--color-border);
+  padding-top: 10px;
+}
+
+.verse-text-share {
+  font-size: calc(13px * var(--scale));
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.7;
+  margin: 0 0 6px;
+}
+.verse-text-share:last-child { margin-bottom: 0; }
 
 .verse-text-ko {
   font-size: calc(20px * var(--scale));
