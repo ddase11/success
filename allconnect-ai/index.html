@@ -208,12 +208,15 @@ h2{font-size:clamp(28px,4vw,42px);color:var(--blue)}
 .form.sent .fields{display:none}.form.sent .done{display:block}
 
 /* Footer */
-footer{padding:56px 0 64px;text-align:center;border-top:1px solid var(--hairline);background:var(--canvas)}
-.f-brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.04em}
+footer{padding:44px 0 52px;text-align:left;border-top:1px solid var(--hairline);background:var(--canvas);color:var(--ink)}
+.f-line{display:flex;flex-wrap:wrap;align-items:center;font-size:15px;line-height:1.95}
+.f-line span+span::before{content:"";display:inline-block;width:1px;height:12px;background:#b5b5b5;margin:0 14px;vertical-align:middle}
+.f-top{margin-bottom:4px}
+.f-brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:21px;letter-spacing:-.04em}
 .f-brand img{width:30px;height:30px;object-fit:contain}
-footer .mail{display:block;margin:12px 0 6px;color:var(--body);font-size:15px}
-footer .mail:hover{color:var(--blue)}
-footer small{color:var(--mute);font-size:13px}
+footer .mail{color:var(--ink);text-decoration:none}
+footer .mail:hover{color:var(--blue);text-decoration:underline}
+.f-copy{margin-top:14px;font-size:13.5px;color:var(--mute);letter-spacing:.01em}
 
 /* Lightbox */
 .lb{position:fixed;inset:0;z-index:100;background:rgba(10,10,10,.86);display:none;align-items:center;justify-content:center;padding:32px;cursor:zoom-out}
@@ -286,6 +289,10 @@ footer small{color:var(--mute);font-size:13px}
   .chat{width:290px}
   .form{padding:26px 20px}
   .arrows{display:none}
+  footer{padding:32px 0 40px}
+  .f-line{flex-direction:column;align-items:flex-start;line-height:1.85}
+  .f-line span+span::before{display:none}
+  .f-top{gap:2px}
 }
 </style>
 </head>
@@ -463,9 +470,10 @@ footer small{color:var(--mute);font-size:13px}
 
 <footer>
   <div class="wrap">
-    <div class="f-brand"><img src="/assets/logo-mark.png" alt="">올커넥트AI</div>
-    <a class="mail" href="mailto:ddase1@gmail.com">ddase1@gmail.com</a>
-    <small>&copy; 2026 올커넥트AI. All Rights Reserved.</small>
+    <div class="f-line f-top"><span class="f-brand"><img src="/assets/logo-mark.png" alt="">올커넥트AI</span><span>대표 : 김병훈</span><span>사업자등록번호 : 653-03-03457</span></div>
+    <div class="f-line"><span>통신판매업신고번호 : 2026-서울강남-05718호</span><span>이메일 : <a class="mail" href="mailto:ddase1@gmail.com">ddase1@gmail.com</a></span></div>
+    <div class="f-line"><span>서울시 강남구 테헤란로 70길 12, 402-J515호(대치동,H타워)</span></div>
+    <p class="f-copy">Copyrights &copy; 2025 올커넥트AI. ALL RIGHTS RESERVED.</p>
   </div>
 </footer>
 
@@ -475,8 +483,8 @@ footer small{color:var(--mute);font-size:13px}
 /* ── Portfolio data (포트폴리오.zip 카테고리별) ── */
 const PF=[
  {case:'CASE 01',cat:'정형외과',topic:'홈페이지 연결 인스타그램 카드뉴스 — 퇴근 후 목과 어깨의 무거움, 손 저림 등 증상 안내',key:'ortho',r:'1/1',n:4,alt:'정형외과 카드뉴스'},
- {case:'CASE 02',cat:'피부과 · 기미 치료',topic:'인스타그램 스토리 카드뉴스 — 기미 치료 전 확인할 점과 자외선 차단 관리',key:'skin',r:'720/949',n:4,alt:'피부과 기미 치료 카드뉴스'},
- {case:'CASE 02',cat:'피부과 · 피부 건강 가이드',topic:'인스타그램 스토리 카드뉴스 — 트러블 뒤 갈색 자국, 염증 흔적 관리 가이드',key:'guide',r:'720/900',n:4,alt:'피부 건강 가이드 카드뉴스'},
+ {case:'CASE 02',cat:'피부과 · 기미 치료',topic:'인스타그램 스토리 카드뉴스 — 기미 치료 전 확인할 점과 자외선 차단 관리',key:'skin',r:'3/4',n:4,alt:'피부과 기미 치료 카드뉴스'},
+ {case:'CASE 02',cat:'피부과 · 피부 건강 가이드',topic:'인스타그램 스토리 카드뉴스 — 트러블 뒤 갈색 자국, 염증 흔적 관리 가이드',key:'guide',r:'1122/1402',n:1,alt:'피부 건강 가이드 카드뉴스'},
  {case:'CASE 03',cat:'동물병원',topic:'정보형 카드뉴스 — 아토피 강아지 돌봄 10가지, 강아지에게 위험한 음식 7가지',key:'vet',r:'720/900',n:2,alt:'동물병원 정보형 카드뉴스'},
  {case:'CASE 04',cat:'절약 · 재테크',topic:'인스타그램 스토리 카드뉴스 — 28세 직장인의 배달음식비 아끼기 (5장 시리즈)',key:'save',r:'1/1',n:5,alt:'절약 재테크 배달비 카드뉴스'}
 ];
@@ -484,7 +492,7 @@ const rows=document.getElementById('pf-rows');
 const arrows=`<button class="arr" data-dir="-1" aria-label="이전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button class="arr" data-dir="1" aria-label="다음"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>`;
 PF.forEach((p,i)=>{
   const imgs=Array.from({length:p.n},(_,k)=>`<div class="card-img" style="aspect-ratio:${p.r}"><img src="/assets/pf/${p.key}-${k+1}.webp" alt="${p.alt} ${k+1}" draggable="false"></div>`).join('');
-  rows.insertAdjacentHTML('beforeend',`<div class="pf-row rv"><div class="pf-meta"><div><span class="case">${p.case} · ${p.cat}</span><p>${p.topic}</p></div><div class="arrows" data-for="pf-${i}">${arrows}</div></div><div class="slider" id="pf-${i}"><div class="track" data-auto="1">${imgs}</div></div></div>`);
+  rows.insertAdjacentHTML('beforeend',`<div class="pf-row rv"><div class="pf-meta"><div><span class="case">${p.case} · ${p.cat}</span><p>${p.topic}</p></div>${p.n>1?`<div class="arrows" data-for="pf-${i}">${arrows}</div>`:''}</div><div class="slider" id="pf-${i}"><div class="track" data-auto="1">${imgs}</div></div></div>`);
 });
 rows.insertAdjacentHTML('beforeend',`<div class="pf-row rv"><div class="pf-meta"><div><span class="case">CASE 05 · 생활정보 · 원페이지 카드</span><h3>절약 차별화 컨셉 원페이지 카드</h3></div></div><div class="single"><div class="card-img" style="aspect-ratio:1/1"><img src="/assets/pf/milk-1.webp" alt="우유 용량별 가격 비교 원페이지 카드" width="900" height="900"></div><div><p style="font-size:19px;font-weight:600;letter-spacing:-.03em;line-height:1.5">1.8L 한 통 값이면 1L 두 팩을 살 수 있어요. 200mL, 딱 한 잔이 더 생깁니다.</p><ul><li>100mL 단가로 나눠 비교해 “큰 게 싸다”는 통념을 데이터로 확인</li><li>혼자·1~2인·3인 이상, 가구별 추천 용량을 한눈에 정리</li><li>저장과 댓글 참여를 유도하는 마무리 질문 구성</li></ul></div></div></div>`);
 
@@ -494,6 +502,7 @@ const SPEED=26; // px/초 (천천히)
 function initSlider(sl){
   const tr=sl.querySelector('.track'); if(!tr) return;
   const orig=[...tr.children];
+  if(orig.length<2) return; // 이미지 1장: 움직이지 않고 그대로 표시
   let setW=0, pos=0, paused=false, visible=false, down=false, sx=0, sl0=0, moved=0, last=0, busyUntil=0;
   function build(){
     const keep=setW?((tr.scrollLeft%setW)/setW):0;
